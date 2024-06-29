@@ -1,0 +1,277 @@
+:root, [data-ui-theme=nostromo] {
+  --editor-primary: #58934c;
+  --editor-secondary: #958d44;
+  --editor-white: white;
+
+  --editor-primary-hue: 183;
+
+  --mozilla-light: #565656;
+  --mozilla-twilight: #3c3c3c;
+  --mozilla-dawn: #313137;
+  --mozilla-dusk: #232327;
+  --mozilla-dark: #1c1b22;
+  --mozilla-midnight: #18181a;
+
+
+  --fedora-dark: #2f2f2f;
+  --codemirror-dark: #282c34;
+
+  --editor-foreground-primary:   var(--mozilla-light);
+  --editor-foreground-secondary: var(--mozilla-twilight);
+  --editor-background-primary:   hsl(var(--editor-primary-hue), 30%, 17%);
+  --editor-background-secondary: var(--mozilla-dark);
+
+  --editor-light: #141920;
+  --editor-dark:  #0a0e12;
+  --editor-text:  #0a0e12;
+
+  --editor-success: #0af2cf;
+  --editor-info: #0ae6f2;
+  --editor-warning: #d2f20a;
+  --editor-danger: #f7631a;
+
+  /* tints - only color mix allowed */
+
+  /* --editor-border: color-mix(in srgb, var(--editor-background) 90%, black); */
+
+  --editor-gradient0: color-mix(in srgb, var(--editor-background) 10%, black);
+  --editor-gradient1: color-mix(in srgb, var(--editor-background) 5%, black);
+
+  /* components */
+
+
+}
+
+#editor-primary-gradient {
+  --editor-gradient0: color-mix(in srgb, var(--editor-background-primary) 99%, black);
+  --editor-gradient1: color-mix(in srgb, var(--editor-background-primary) 70%, black);
+}
+
+#editor-secondary-gradient {
+  --editor-gradient0: color-mix(in srgb, var(--editor-background-secondary) 99%, black);
+  --editor-gradient1: color-mix(in srgb, var(--editor-background-secondary) 40%, black);
+}
+
+
+body {
+  background-color: black;
+}
+
+svg.editor-interface {
+    outline: none;
+}
+.editor-scene {
+  fill: transparent;
+}
+
+.editor-overlay {
+  opacity: 0.5;
+}
+.editor-menu {
+  stroke: var(--editor-border);
+  fill: var(--fedora-dark);
+}
+
+.card {
+
+}
+
+
+
+.hoverable-primary:hover {
+  background-color: var(--bs-primary)
+}
+.hoverable-secondary:hover {night
+  background-color: var(--bs-dark)
+}
+
+.hoverable-text-primary:hover {
+  color: var(--bs-primary) ! important;
+}
+
+.hoverable-text-light:hover > * {
+  color: var(--editor-white) ! important;
+  opacity:1 !important;
+}
+.hoverable-text-dark:hover {
+  color: var(--bs-dark) ! important;
+}
+.hoverable-dotted:hover {
+  border-bottom: 1px dotted var(--bs-dark) ! important;
+}
+
+
+.viewport-background.workspace {
+    stroke: var(--editor-border);
+    /* fill: url("#editor-secondary-gradient"); */
+    fill: var(--editor-background-secondary);
+}
+.viewport-background.window {
+    stroke: var(--editor-border);
+    /* fill: url("#editor-secondary-gradient"); */
+    fill: var(--editor-background-secondary);
+}
+
+.component-background.application.editor {
+    fill: var(--codemirror-dark);
+}
+
+
+
+.viewport-background {
+  /* fill: var(--editor-background-primary); */
+}
+
+
+
+
+.window-background {
+    stroke: var(--editor-light);
+    fill: var(--editor-background);
+}
+
+/* note .application is a domin, and .window is just some component using the window subclass*/
+.component-background.application, .component-background.window {
+  /* filter: url(#shadow); */
+  fill: var(--editor-foreground-secondary);
+
+  &.indicate {
+    fill: var(--editor-foreground-primary);
+
+  }
+
+}
+
+
+.window-resize-handle {
+  fill: var(--mozilla-dawn);
+
+}
+
+
+
+
+/*
+  editor-anchor-line
+  editor-component-what
+*/
+
+.editor-socket-pad {
+
+  stroke: var(--editor-primary);
+  fill: var(--fedora-dark);
+
+  stroke-width: 2;
+
+
+  &.compatible {
+    fill: var(--editor-success);
+  }
+
+  &.incompatible {
+    fill: var(--editor-danger);
+  }
+
+  &.selected {
+    stroke: var(--editor-warning);
+  }
+
+}
+
+
+
+
+
+
+.editor-anchor-line {
+  stroke: var(--editor-primary);
+  stroke-width: 2;
+}
+
+
+.editor-connector {
+    stroke: var(--editor-primary);
+  stroke-width: 2;
+  &.selected {
+    stroke: var(--editor-warning);
+  }
+}
+
+.editor-connector-midpoint {
+  fill: var(--editor-primary);
+  stroke: var(--editor-primary);
+  &.selected {
+    stroke: var(--editor-warning);
+    fill: var(--editor-warning);
+  }
+}
+
+.editor-caption {
+  stroke: var(--editor-info);
+  stroke-width: 2;
+  &.selected {
+    stroke: var(--editor-primary);
+  }
+}
+
+.editor-junction {
+    stroke: var(--editor-border);
+  stroke-width: 2;
+  &.selected {
+    stroke: var(--editor-warning);
+  }
+}
+
+.editor-container {
+    stroke: var(--editor-border);
+  stroke-width: 2;
+}
+
+.editor-control {
+    stroke: var(--editor-border);
+  stroke-width: 2;
+}
+
+.editor-frame {
+    stroke: var(--editor-border);
+  stroke-width: 2;
+}
+
+div.editor-codemirror {
+  background-color: var(--editor-dark);
+  border: 2px solid var(--editor-dark);
+}
+
+div.editor-codemirror * {
+  border-radius: 0 ! important;
+}
+
+
+.editor-label {
+
+  fill: color-mix(in srgb, var(--editor-foreground-primary) 99%, black);
+
+  &.selected {
+    fill: var(--editor-warning);
+  }
+}
+.editor-label-text {
+  pointer-events: none;
+  fill: var(--editor-text);
+}
+
+
+
+
+
+.editor-device-info-text {
+  fill: var(--editor-primary);
+}
+
+.editor-device-info {
+    stroke: var(--editor-border);
+  fill: var(--editor-dark);
+  &.selected {
+    fill: var(--editor-warning);
+  }
+}

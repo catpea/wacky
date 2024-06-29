@@ -1,0 +1,59 @@
+{
+  "name": "wacky",
+  "version": "1.0.1",
+  "description": "User Friendly Visual Programming Language",
+  "author": "catpea",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/catpea/wacky.git"
+  },
+  "bugs": {
+    "url": "https://github.com/catpea/wacky/issues"
+  },
+  "homepage": "https://github.com/catpea/wacky#readme",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "./start.js",
+    "save": "git add .; git commit -m 'Updated Release'; git push; npm version patch; npm publish; git push;",
+    "test": "./try.js"
+  },
+  "keywords": [],
+  "imports": {
+    "#plug-ins/*": "./plug-ins/*",
+    "#abstract/*": "./abstract/*"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@codemirror/commands": "^6.3.3",
+    "@codemirror/lang-javascript": "^6.2.2",
+    "@codemirror/state": "^6.4.1",
+    "@codemirror/theme-one-dark": "^6.1.2",
+    "@codemirror/view": "^6.24.1",
+    "@xterm/addon-fit": "^0.10.0",
+    "@xterm/xterm": "^5.5.0",
+    "bootstrap": "^5.3.2",
+    "bootstrap-icons": "^1.11.3",
+    "calculate-percent": "^2.1.0",
+    "cheerio": "^1.0.0-rc.12",
+    "codemirror": "^6.0.1",
+    "deep-equal": "^2.2.3",
+    "esbuild-svelte": "^0.8.1",
+    "esprima": "^4.0.1",
+    "events": "^3.3.0",
+    "json5": "^2.2.3",
+    "lodash": "^4.17.21",
+    "oneof": "^2.1.0",
+    "panzoom": "^9.4.3",
+    "svelte": "^4.2.17",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "chalk": "^5.3.0",
+    "esbuild": "0.19.6",
+    "esbuild-sass-plugin": "^2.16.0"
+  },
+  "directories": {
+    "doc": "doc"
+  }
+}
