@@ -267,8 +267,9 @@ export class Instance {
       disposables.push(...arg);
     }
     // EXTERNAL (USER) VERSION
+
     Object.defineProperty(this, 'disposable', {
-      set: (value) => this.oo.disposables.push(value),
+      set: (value) => {throw new Error('Do not assign disposables this way use .oo.addDisposable')},
       configurable: false,
     });
 

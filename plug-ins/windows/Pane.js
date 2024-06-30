@@ -68,6 +68,7 @@ export default class Pane {
   methods = {
 
     initialize(){
+
       this.name = 'pane';
 
       if(this.library){
@@ -80,50 +81,18 @@ export default class Pane {
         })
       }
 
-      // console.log('XXX', this.components);
-
-
-
-
-
-
-
-
       if(this.getRootContainer().isRootWindow) return;
-      // this.h = 400;
-      this.flexible = true;
+
+      this.flexible = true; // NOTE: panes are "flexible" by default - they grow as sapce becomes available.
+
     },
 
     mount(){
       // this.parent.elements = this.elements;
 
-      // console.log(Δ);
+      this.addDisposableFromSmartEmitter(this.getRoot().keyboard, 'Delete', (e)=>{
+        console.log('Cute Emitter', e);
 
-      // let X ='';
-      // for (let i = 1; i < 300; i++) {
-      //   let x = 1200 *  i;
-      //   X+=`<Hello id="test-foreign-${i}" x="${x}" y="1200" w="1000" h="1000"></Hello>\n`
-      // }
-      // console.log(X);
-
-      this.getApplication().on('showMenu', (showMenu)=>{
-        if(showMenu){
-
-        // Add Menu
-        const [horizontal1, [ addButton, delButton ]] = nest(Horizontal, [
-          [Label, {h: 24, W:32, text: 'File', parent:this}, (c,p)=>p.children.create(c)],
-          [Label, {h: 24, W:32, text: 'Info', parent:this}, (c,p)=>p.children.create(c)],
-          [Label, {h: 24,  text: '', flexible:true, parent:this}, (c,p)=>p.children.create(c)],
-        ], (c)=>this.children.create(c));
-
-        // Add Menu Listeners
-        this.disposable = click(addButton.handle, e=>{
-          const id = uuid();
-          const node = new Instance( Node, {id, origin:this.getRootContainer().id, type: "Junction", x: 300, y: 300, data:{}} );
-          this.elements.create(node);
-        })
-
-        }
       });
 
 
@@ -137,31 +106,8 @@ export default class Pane {
       this.children.create( paneBody );
       this.getRoot().origins.create({ id: this.getRootContainer().id, root: this, scene:paneBody.el.Mask })
 
-      this.getApplication().on('showStatus', (showStatus)=>{
-        if(showStatus){
-          const [horizontal, [ statusBar ]] = nest(Horizontal, [
-            [Label, {h: 24,   text: 'Status: nominal', parent:this}, (c,p)=>p.children.create(c)],
-            // [Label, {h: 24, W:24, text: '///', parent:this}, (c,p)=>p.children.create(c)],
-          ], (c)=>this.children.create(c));
-          this.any(['x','y','zoom','w','h'], ({x,y,zoom,w,h})=>statusBar.text=`${x.toFixed(0)}x${y.toFixed(0)} zoom:${zoom.toFixed(2)} win=${this.getApplication().w.toFixed(0)}:${this.getApplication().h.toFixed(0)} pane=${w.toFixed(0)}:${h.toFixed(0)} id:${this.getApplication().id}`);
-          // const resize = new Resize({
-          //   area: window,
-          //   minimumX:320,
-          //   minimumY:200,
-          //   handle: resizeHandle.el.Container,
-          //   scale: ()=>this.getParentScale(this),
-          //   box:  this.getApplication(this),
-          //   before: ()=>{},
-          //   movement: ({x,y})=>{},
-          //   after: ()=>{},
-          // });
-          // this.destructable = ()=>resize.destroy();
-        }
-      });
-
       // NOTE: CODE ANOMALY FOR ROOT EDGECASE
       if(this.parent.isRootWindow){
-
         this.parent.on('h', parentH=>{
           const childrenHeight = this.children.filter(c=>!(c===paneBody)).reduce((total, c) => total + (c.h), 0);
           const spacers = ((this.parent.s * 1) * (this.children.length > 0 ? this.children.length - 1 : 0  )) //XXX: just top spacer not *2 right?
@@ -169,7 +115,6 @@ export default class Pane {
           paneBody.h = freeSpace;
           paneBody.H = freeSpace;
         })
-
       };
 
       // Based on pan and zoom adjust the viewport.
@@ -179,19 +124,12 @@ export default class Pane {
 
       this.on("elements.created", (node) => {
 
-        // console.log('XXX this.components', node.type, this.components[node.type]?'OK':'X', this.components);
-        console.log(`elements.created (application=${this.getApplication().id})`, this.elements.raw.map(o=>o.id));
-        console.log(`elements.created (application=${this.getApplication().id})`, this.getApplication().socketRegistry.raw.map(o=>o.id));
-
         const Ui = this.components[node.type]||this.components['Hello'];
         if(!Ui) return console.warn(`Skipped Unrecongnized Component Type "${node.type}"`);
 
         let root = svg.g({ id:node.id, name: 'element' });
         paneBody.content.appendChild(root);
-
-        console.log('Creating', node.type);
         const options = { node, scene: root, parent: this, id:node.id, content:node.content, library:node.library };
-
         const attributes = {};
         for (const name of node.oo.attributes) { attributes[name] = node[name] }
         const ui = new Instance(Ui, Object.assign(attributes, options));
@@ -211,12 +149,8 @@ export default class Pane {
       // Attach context menu to background
       // NOTE: this uses meowse/Menu, triggers openMenu on root window, which will open /windows/menu
 
-
       const menu = new Menu({
         area: paneBody.body,
-        // zoom: ()=>this.zoom,
-        // scale: ()=>this.getScale(this),
-        // pan: ()=>({ x: this.getRoot().pane.panX, y:this.getRoot().pane.panY}),
         transforms: ()=>this.getTransforms(this),
         show: ({x,y,tx,ty})=>{ // NOTE: tx and ty are translated
 
@@ -227,61 +161,41 @@ export default class Pane {
             text: `New ${className}`,
             value: className,
             action:()=>{
-
               console.log('Creating', className, this.panX, this.panY, this.zoom);
-
-
-
-
               const node = new Instance(Node, {
                 id:1,
                 origin: this.getApplication().id,
                 type:className,
-                //
-                // x:tx/this.zoom,
-                // y:ty/this.zoom,
-
                 x:tx,
                 y:ty,
-
                 w:170,
                 h:256,
               });
               const data = {}; //? NOTE: this can use await...
               node.assign({ }, data);
               this.elements.create( node ); // -> see project #onStart for creation.
-
             }
           }));
-          console.log(availableComponents);
 
           const rootWindow = this.getRoot();
-
-          rootWindow.openMenu({
-            x,
-            y,
-            options: {
-              data: availableComponents,
-            }
-          });
+          rootWindow.openMenu({ x, y, options: { data: availableComponents, } });
 
 
         },
       });
-      this.destructable = ()=>menu.destroy();
+
+      this.addDisposable(menu);
 
       const pan = new Pan({
         area: window,
         handle: paneBody.background,
         scale: ()=>this.getParentScale(this),
-        before: ()=>{},
         movement: ({x,y})=>{
           this.panX -= x;
           this.panY -= y;
         },
-        after: ()=>{},
       });
-      this.destructable = ()=>pan.destroy();
+      this.addDisposable(pan);
 
       const zoom = new Zoom({
         magnitude: 0.1,
@@ -303,13 +217,11 @@ export default class Pane {
         after: (data,debug)=>{
         },
       });
-      this.destructable = ()=>zoom.destroy();
+      this.addDisposable(zoom);
 
+      this.on('url', url=>this.loadXml(this.url));
 
-
-
-      this.on('url',     url=>this.loadXml(this.url));
-
+      // TODO: Kludge the flow must be fixed
       if(this.getApplication().content) this.loadElements(this.getApplication().content /* this passes on the cheerio tuple */ )
 
     },
@@ -352,11 +264,9 @@ export default class Pane {
     },
 
     createNode(meta, data, content){
-      console.log(meta, data, content);
       const node = new Instance(Node, { origin: this.getApplication().id });
       node.assign(meta, data, content);
       this.elements.create( node ); // -> see project #onStart for creation.
-      console.log('post:createNode', this.elements.raw.map(o=>o.id));
     },
 
 

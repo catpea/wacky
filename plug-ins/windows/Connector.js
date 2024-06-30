@@ -12,6 +12,9 @@ export default class Connector {
   };
 
   observables = {
+
+    selected: false,
+
     from: null,
     to: null,
     out: null,
@@ -37,27 +40,35 @@ export default class Connector {
 
     mount(){
 
+      this.el.PrimaryBg = svg.line({
+        name: this.name,
+        class: 'editor-connector-zone',
+        'vector-effect': 'non-scaling-stroke',
+      });
+
       this.el.Primary = svg.line({
         name: this.name,
         class: 'editor-connector',
         'vector-effect': 'non-scaling-stroke',
+        style:{'pointer-events': 'none'},
       });
 
       this.el.Midpoint = svg.circle({
         name: this.name,
         class: 'editor-connector-midpoint',
         'vector-effect': 'non-scaling-stroke',
+        style:{'pointer-events': 'none'},
         r:4,
       });
 
-      // this.on("selected", selected => selected?this.el.Primary.classList.add('selected'):this.el.Primary.classList.remove('selected'));
-      // this.on("selected", selected => selected?this.el.Midpoint.classList.add('selected'):this.el.Midpoint.classList.remove('selected'));
+      this.on("selected", selected => selected?this.el.Primary.classList.add('selected'):this.el.Primary.classList.remove('selected'));
+      this.on("selected", selected => selected?this.el.Midpoint.classList.add('selected'):this.el.Midpoint.classList.remove('selected'));
 
 
-      // const select = new Select({
-      //   component: this,
-      //   handle: this.el.Primary,
-      // }); this.destructable = ()=>focus.destroy()
+      const select = new Select({
+        component: this,
+        handle: this.el.PrimaryBg,
+      }); this.destructable = ()=>focus.destroy()
 
       this.on('name',  name=>update(this.el.Primary,{name}), );
 
@@ -161,6 +172,7 @@ export default class Connector {
       this.any(['x1','y1','x2','y2'], ({x1, y1, x2, y2}) => {
         const [x3,y3] = edgepoint(x1, y1, 12, x1, y1, x2, y2);
         const [x4,y4] = edgepoint(x2, y2, -12, x1, y1, x2, y2);
+        update(this.el.PrimaryBg, {x1:x3, y1:y3, x2:x4, y2:y4})
         update(this.el.Primary, {x1:x3, y1:y3, x2:x4, y2:y4})
         // console.log(this.el.Primary, {x1:x3, y1:y3, x2:x4, y2:y4});
       });

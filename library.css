@@ -11518,8 +11518,10 @@ fieldset:disabled .btn {
 [data-ui-theme=nostromo] {
   --editor-primary: #58934c;
   --editor-secondary: #958d44;
-  --editor-white: white;
   --editor-primary-hue: 183;
+  --editor-white: white;
+  --editor-text: #0a0e12;
+  --editor-light: #141920;
   --mozilla-light: #565656;
   --mozilla-twilight: #3c3c3c;
   --mozilla-dawn: #313137;
@@ -11528,19 +11530,17 @@ fieldset:disabled .btn {
   --mozilla-midnight: #18181a;
   --fedora-dark: #2f2f2f;
   --codemirror-dark: #282c34;
-  --editor-foreground-primary: var(--mozilla-light);
-  --editor-foreground-secondary: var(--mozilla-twilight);
-  --editor-background-primary: hsl(var(--editor-primary-hue), 30%, 17%);
-  --editor-background-secondary: var(--mozilla-dark);
-  --editor-light: #141920;
   --editor-dark: #0a0e12;
-  --editor-text: #0a0e12;
   --editor-success: #0af2cf;
   --editor-info: #0ae6f2;
   --editor-warning: #d2f20a;
   --editor-danger: #f7631a;
   --editor-gradient0: color-mix(in srgb, var(--editor-background) 10%, black);
   --editor-gradient1: color-mix(in srgb, var(--editor-background) 5%, black);
+  --editor-foreground-primary: var(--mozilla-light);
+  --editor-foreground-secondary: var(--mozilla-twilight);
+  --editor-background-primary: hsl(var(--editor-primary-hue), 30%, 17%);
+  --editor-background-secondary: var(--mozilla-dark);
 }
 #editor-primary-gradient {
   --editor-gradient0: color-mix(in srgb, var(--editor-background-primary) 99%, black);
@@ -11638,6 +11638,10 @@ svg.editor-interface {
   &.selected {
     stroke: var(--editor-warning);
   }
+}
+.editor-connector-zone {
+  stroke: rgba(0, 0, 0, .01);
+  stroke-width: 8;
 }
 .editor-connector-midpoint {
   fill: var(--editor-primary);

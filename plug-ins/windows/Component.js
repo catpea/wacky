@@ -1,6 +1,10 @@
+import Objective from "/plug-ins/windows/Objective.js";
+
 import { svg, update } from "/plug-ins/domek/index.js"
 
 export default class Component {
+
+  static extends = [Objective];
 
   properties = {
     id: uuid(),
@@ -124,24 +128,7 @@ export default class Component {
       return pipe;
     },
 
-    // getRootContainer() {
-    //   let response = null;
-    //
-    //   if(!this.parent){
-    //     // console.log(`Object ${this.oo.name} did not have a parent`);
-    //     response = this;
-    //   } else if(!this.parent.getRootContainer){
-    //     // console.log(`Object ${this.oo.name} did not have a getRootContainer`);
-    //     response = this;
-    //   } else if(this.contain){
-    //     // console.log(`Object ${this.oo.name} had a .contain directive`);
-    //     response = this;
-    //   }else{
-    //     response = this.parent.getRootContainer();
-    //   }
-    //
-    //   return response;
-    // },
+
 
     getRootContainer() {
       let response = null;
@@ -225,10 +212,7 @@ export default class Component {
 
 
     initialize(){
-      // console.log(`%cComponent.initialize!`, 'background: hsl(180, 90%, 60%); color: black;');
-
       this.on("node", (node) => {
-
         node.on("x", x => this.x = x);
         node.on("y", y => this.y = y);
         node.on("w", w => this.w = w);
@@ -238,13 +222,20 @@ export default class Component {
         node.on("b", b => this.b = b);
         node.on("p", p => this.p = p);
         node.on("s", s => this.s = s);
-
         // node carries a .data property
         node.on("data", data => this.data = data);
         if(node.content){this.content = node.content};
-
       });
     },
+
+    destroy(){
+      this.removeElements();
+    }
+
+
+
+
+
 
   }
 

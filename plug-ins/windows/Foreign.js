@@ -3,6 +3,7 @@ import {Instance} from "/plug-ins/object-oriented-programming/index.js";
 import Control from "/plug-ins/windows/Control.js";
 import { svg, html, update } from "/plug-ins/domek/index.js"
 
+
 export default class Foreign {
 
   static extends = [Control];
@@ -43,10 +44,11 @@ export default class Foreign {
         }
       });
 
-      this.el.ForeignObject.appendChild(this.body)
+      this.el.ForeignObject.appendChild(this.body);
+
+      this.addDisposableFromEvent( this.body, 'keydown', (e)=>e.stopImmediatePropagation() )
 
       this.on('name', name=>update(this.el.ForeignObject,{name}));
-
       this.on('w', width=>update(this.el.ForeignObject,{width}));
       this.on('h', height=>update(this.el.ForeignObject,{height}));
       this.on('x', x=>update(this.el.ForeignObject,{x}));
@@ -54,13 +56,8 @@ export default class Foreign {
       this.on('w', width=>update(this.body, {style:{width: width+'px'}}));
       this.on('h', height=>update(this.body, {style:{height: height+'px'}}));
 
-
-
       this.appendElements();
-    },
 
-    destroy(){
-      this.removeElements()
     }
 
   }

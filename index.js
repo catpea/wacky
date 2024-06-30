@@ -6555,7 +6555,9 @@
         disposables.push(...arg);
       }, "disposable");
       Object.defineProperty(this, "disposable", {
-        set: (value) => this.oo.disposables.push(value),
+        set: (value) => {
+          throw new Error("Do not assign disposables this way use .oo.addDisposable");
+        },
         configurable: false
       });
       this.dispose = () => {
@@ -7240,11 +7242,54 @@
   }
   __name(click, "click");
 
+  // plug-ins/disposable/index.js
+  function createDisposableListener(element2, eventType, callback, options) {
+    element2.addEventListener(eventType, callback);
+    return {
+      destroy() {
+        element2.removeEventListener(eventType, callback, options);
+      }
+    };
+  }
+  __name(createDisposableListener, "createDisposableListener");
+
+  // plug-ins/windows/Objective.js
+  var Container = class {
+    static {
+      __name(this, "Container");
+    }
+    traits = {
+      // Low-level Object Oriented Programming Helpers For Windows
+      addDisposable(disposable) {
+        if (disposable.destroy) {
+          this.oo.disposables.push(() => disposable.destroy());
+        } else if (typeof disposable === "function") {
+          this.oo.disposables.push(disposable);
+        } else {
+          throw new Error("Malformed Disposable");
+        }
+      },
+      // Utils
+      addDisposableFromMethods(object, names) {
+        for (const methodName of names.split(" ").map((o) => o.trim()).filter((o) => o)) {
+          this.addDisposable(() => object[methodName]());
+        }
+      },
+      addDisposableFromEvent(element2, eventType, callback, options) {
+        this.addDisposable(createDisposableListener(element2, eventType, callback, options));
+      },
+      addDisposableFromSmartEmitter(emitter, eventName, callback, options) {
+        this.addDisposable(emitter.on(eventName, callback, options));
+      }
+    };
+  };
+
   // plug-ins/windows/Component.js
   var Component = class {
     static {
       __name(this, "Component");
     }
+    static extends = [Container];
     properties = {
       id: uuid(),
       el: {},
@@ -7365,24 +7410,6 @@
         const pipe = origin.root.pipes.get(id2);
         return pipe;
       },
-      // getRootContainer() {
-      //   let response = null;
-      //
-      //   if(!this.parent){
-      //     // console.log(`Object ${this.oo.name} did not have a parent`);
-      //     response = this;
-      //   } else if(!this.parent.getRootContainer){
-      //     // console.log(`Object ${this.oo.name} did not have a getRootContainer`);
-      //     response = this;
-      //   } else if(this.contain){
-      //     // console.log(`Object ${this.oo.name} had a .contain directive`);
-      //     response = this;
-      //   }else{
-      //     response = this.parent.getRootContainer();
-      //   }
-      //
-      //   return response;
-      // },
       getRootContainer() {
         let response = null;
         if (!this.parent) {
@@ -7469,6 +7496,9 @@
           }
           ;
         });
+      },
+      destroy() {
+        this.removeElements();
       }
     };
   };
@@ -7697,11 +7727,6 @@
           cy: this.y
         });
         this.on("selected", (selected) => selected ? this.el.Pad.classList.add("selected") : this.el.Pad.classList.remove("selected"));
-        const select = new Select({
-          component: this,
-          handle: this.el.Pad
-        });
-        this.destructable = () => select.destroy();
         this.pad = this.el.Pad;
         this.on("name", (name) => update(this.el.Pad, { name }));
         this.on("x", (cx) => update(this.el.Pad, { cx }));
@@ -7999,7 +8024,7 @@
   };
 
   // plug-ins/windows/Container.js
-  var Container = class {
+  var Container2 = class {
     static {
       __name(this, "Container");
     }
@@ -8035,7 +8060,7 @@
     static {
       __name(this, "Vertical");
     }
-    static extends = [Container];
+    static extends = [Container2];
     methods = {
       initialize() {
         this.layout = new VerticalLayout(this);
@@ -8115,7 +8140,7 @@
     static {
       __name(this, "Horizontal");
     }
-    static extends = [Container];
+    static extends = [Container2];
     methods = {
       initialize() {
         this.layout = new HorizontalLayout(this);
@@ -8263,6 +8288,7 @@
         }
       }
     };
+    traits = {};
     methods = {
       initialize() {
       },
@@ -8270,12 +8296,7 @@
         const [horizontal, [info1, maximizeButton]] = nest(Horizontal, { parent: this, scene: this.scene, s: 2 }, [
           [Label, { h: 24, text: this.text, parent: this, r: 3 }, (c, p) => p.children.create(c)],
           [Label, { h: 24, W: 24, text: "++", parent: this, r: 3 }, (c, p) => p.children.create(c)]
-        ], (c) => {
-          this.destructable = () => {
-            c.stop();
-            c.destroy();
-          };
-        });
+        ], (c) => this.addDisposableFromMethods(c, "stop destroy"));
         this.handle = info1.el.Container;
         horizontal.start();
         this.on("selected", (selected) => selected ? info1.el.Container.classList.add("selected") : info1.el.Container.classList.remove("selected"));
@@ -8294,7 +8315,7 @@
           [current, "h", null]
         ];
         let unwatch;
-        this.disposable = click(maximizeButton.handle, (e) => {
+        const windowToggle = /* @__PURE__ */ __name(function(e) {
           e.stopPropagation();
           front(current.scene);
           if (maximized) {
@@ -8318,10 +8339,8 @@
             });
             maximized = true;
           }
-        });
-      },
-      destroy() {
-        this.removeElements();
+        }, "windowToggle");
+        this.addDisposableFromEvent(maximizeButton.handle, "click", windowToggle);
       }
     };
   };
@@ -8549,13 +8568,13 @@
           });
           this.destructable = () => move.destroy();
         }
-        const focus = new Focus({
+        const focus2 = new Focus({
           handle: this.scene,
           // TIP: set to caption above to react to window captions only
           component: this,
           element: () => this.scene
         });
-        this.destructable = () => focus.destroy();
+        this.destructable = () => focus2.destroy();
       }
     };
     constraints = {};
@@ -8838,7 +8857,7 @@
     static {
       __name(this, "Viewport");
     }
-    static extends = [Container];
+    static extends = [Container2];
     properties = {
       debugBody: false,
       debugContent: false,
@@ -8951,6 +8970,7 @@
           }
         });
         this.el.ForeignObject.appendChild(this.body);
+        this.addDisposableFromEvent(this.body, "keydown", (e) => e.stopImmediatePropagation());
         this.on("name", (name) => update(this.el.ForeignObject, { name }));
         this.on("w", (width) => update(this.el.ForeignObject, { width }));
         this.on("h", (height) => update(this.el.ForeignObject, { height }));
@@ -8959,9 +8979,6 @@
         this.on("w", (width) => update(this.body, { style: { width: width + "px" } }));
         this.on("h", (height) => update(this.body, { style: { height: height + "px" } }));
         this.appendElements();
-      },
-      destroy() {
-        this.removeElements();
       }
     };
   };
@@ -10783,34 +10800,14 @@
         this.flexible = true;
       },
       mount() {
-        this.getApplication().on("showMenu", (showMenu) => {
-          if (showMenu) {
-            const [horizontal1, [addButton, delButton]] = nest(Horizontal, [
-              [Label, { h: 24, W: 32, text: "File", parent: this }, (c, p) => p.children.create(c)],
-              [Label, { h: 24, W: 32, text: "Info", parent: this }, (c, p) => p.children.create(c)],
-              [Label, { h: 24, text: "", flexible: true, parent: this }, (c, p) => p.children.create(c)]
-            ], (c) => this.children.create(c));
-            this.disposable = click(addButton.handle, (e) => {
-              const id2 = uuid3();
-              const node = new Instance(Node, { id: id2, origin: this.getRootContainer().id, type: "Junction", x: 300, y: 300, data: {} });
-              this.elements.create(node);
-            });
-          }
+        this.addDisposableFromSmartEmitter(this.getRoot().keyboard, "Delete", (e) => {
+          console.log("Cute Emitter", e);
         });
         const paneBody = new Instance(Viewport, { parent: this, classes: this.classes, flexible: true });
         this.viewport = paneBody;
         this.getApplication().viewport = paneBody;
         this.children.create(paneBody);
         this.getRoot().origins.create({ id: this.getRootContainer().id, root: this, scene: paneBody.el.Mask });
-        this.getApplication().on("showStatus", (showStatus) => {
-          if (showStatus) {
-            const [horizontal, [statusBar]] = nest(Horizontal, [
-              [Label, { h: 24, text: "Status: nominal", parent: this }, (c, p) => p.children.create(c)]
-              // [Label, {h: 24, W:24, text: '///', parent:this}, (c,p)=>p.children.create(c)],
-            ], (c) => this.children.create(c));
-            this.any(["x", "y", "zoom", "w", "h"], ({ x, y, zoom: zoom2, w, h }) => statusBar.text = `${x.toFixed(0)}x${y.toFixed(0)} zoom:${zoom2.toFixed(2)} win=${this.getApplication().w.toFixed(0)}:${this.getApplication().h.toFixed(0)} pane=${w.toFixed(0)}:${h.toFixed(0)} id:${this.getApplication().id}`);
-          }
-        });
         if (this.parent.isRootWindow) {
           this.parent.on("h", (parentH) => {
             const childrenHeight = this.children.filter((c) => !(c === paneBody)).reduce((total, c) => total + c.h, 0);
@@ -10825,14 +10822,11 @@
         this.on("panY", (panY) => paneBody.panY = panY);
         this.on("zoom", (zoom2) => paneBody.zoom = zoom2);
         this.on("elements.created", (node) => {
-          console.log(`elements.created (application=${this.getApplication().id})`, this.elements.raw.map((o) => o.id));
-          console.log(`elements.created (application=${this.getApplication().id})`, this.getApplication().socketRegistry.raw.map((o) => o.id));
           const Ui = this.components[node.type] || this.components["Hello"];
           if (!Ui)
             return console.warn(`Skipped Unrecongnized Component Type "${node.type}"`);
           let root = svg.g({ id: node.id, name: "element" });
           paneBody.content.appendChild(root);
-          console.log("Creating", node.type);
           const options = { node, scene: root, parent: this, id: node.id, content: node.content, library: node.library };
           const attributes = {};
           for (const name of node.oo.attributes) {
@@ -10850,9 +10844,6 @@
         this.appendElements();
         const menu = new Menu({
           area: paneBody.body,
-          // zoom: ()=>this.zoom,
-          // scale: ()=>this.getScale(this),
-          // pan: ()=>({ x: this.getRoot().pane.panX, y:this.getRoot().pane.panY}),
           transforms: () => this.getTransforms(this),
           show: ({ x, y, tx, ty }) => {
             const availableComponents = Object.keys(this.components).map((className) => ({
@@ -10867,9 +10858,6 @@
                   id: 1,
                   origin: this.getApplication().id,
                   type: className,
-                  //
-                  // x:tx/this.zoom,
-                  // y:ty/this.zoom,
                   x: tx,
                   y: ty,
                   w: 170,
@@ -10880,32 +10868,21 @@
                 this.elements.create(node);
               }
             }));
-            console.log(availableComponents);
             const rootWindow = this.getRoot();
-            rootWindow.openMenu({
-              x,
-              y,
-              options: {
-                data: availableComponents
-              }
-            });
+            rootWindow.openMenu({ x, y, options: { data: availableComponents } });
           }
         });
-        this.destructable = () => menu.destroy();
+        this.addDisposable(menu);
         const pan = new Pan_default({
           area: window,
           handle: paneBody.background,
           scale: () => this.getParentScale(this),
-          before: () => {
-          },
           movement: ({ x, y }) => {
             this.panX -= x;
             this.panY -= y;
-          },
-          after: () => {
           }
         });
-        this.destructable = () => pan.destroy();
+        this.addDisposable(pan);
         const zoom = new Zoom({
           magnitude: 0.1,
           // area: paneBody.background, // this does just the background
@@ -10927,7 +10904,7 @@
           after: (data, debug) => {
           }
         });
-        this.destructable = () => zoom.destroy();
+        this.addDisposable(zoom);
         this.on("url", (url) => this.loadXml(this.url));
         if (this.getApplication().content)
           this.loadElements(
@@ -10972,11 +10949,9 @@
         return xml;
       },
       createNode(meta, data, content) {
-        console.log(meta, data, content);
         const node = new Instance(Node, { origin: this.getApplication().id });
         node.assign(meta, data, content);
         this.elements.create(node);
-        console.log("post:createNode", this.elements.raw.map((o) => o.id));
       }
     };
   };
@@ -11350,6 +11325,70 @@
     };
   };
 
+  // plug-ins/cute-emitter/CuteEmitter.js
+  var CuteEmitter = class {
+    static {
+      __name(this, "CuteEmitter");
+    }
+    constructor() {
+      this.events = /* @__PURE__ */ new Map();
+    }
+    on(event, listener) {
+      if (!this.events.has(event)) {
+        this.events.set(event, []);
+      }
+      this.events.get(event).push(listener);
+      return {
+        destroy: () => this.off(event, listener)
+      };
+    }
+    emit(event, ...args) {
+      this.events.get(event)?.forEach((listener) => listener(...args));
+    }
+    off(event, listener) {
+      if (this.events.has(event)) {
+        const listeners = this.events.get(event).filter((l) => l !== listener);
+        this.events.set(event, listeners);
+      }
+    }
+  };
+
+  // plug-ins/keyboard-monitor/keyboard.json
+  var keyboard_default = {
+    Backspace: "Remove",
+    Delete: "Remove",
+    Bork: "Bork"
+  };
+
+  // plug-ins/keyboard-monitor/KeyboardMonitor.js
+  var KeyboardMonitor = class extends CuteEmitter {
+    static {
+      __name(this, "KeyboardMonitor");
+    }
+    source;
+    constructor(configuration) {
+      super();
+      const defaults = {
+        source: globalThis.window
+      };
+      const options = Object.assign({}, defaults, configuration);
+      this.source = options.source;
+      this.mount();
+    }
+    mount() {
+      const self = this;
+      this.keyDownListener = function(e) {
+        console.log(keyboard_default[e.key]);
+        self.emit(keyboard_default[e.key]);
+      };
+      console.log("BBB MONITOR UP");
+      this.source.addEventListener("keydown", this.keyDownListener, true);
+    }
+    destroy() {
+      this.handle.removeEventListener("keydown", this.keyDownListener, true);
+    }
+  };
+
   // plug-ins/components/Workspace.js
   var uuid4 = bundle["uuid"];
   var cheerio2 = bundle["cheerio"];
@@ -11361,6 +11400,8 @@
     methods = {
       initialize() {
         console.log("Workspace Initialize!");
+        this.keyboard = new KeyboardMonitor({});
+        this.destructable = () => this.keyboard.destroy();
       },
       saveXml() {
         console.log("Workspace/saveXml called...");
@@ -11979,6 +12020,7 @@
     static extends = [Component];
     properties = {};
     observables = {
+      selected: false,
       from: null,
       to: null,
       out: null,
@@ -12001,17 +12043,31 @@
       initialize() {
       },
       mount() {
+        this.el.PrimaryBg = svg.line({
+          name: this.name,
+          class: "editor-connector-zone",
+          "vector-effect": "non-scaling-stroke"
+        });
         this.el.Primary = svg.line({
           name: this.name,
           class: "editor-connector",
-          "vector-effect": "non-scaling-stroke"
+          "vector-effect": "non-scaling-stroke",
+          style: { "pointer-events": "none" }
         });
         this.el.Midpoint = svg.circle({
           name: this.name,
           class: "editor-connector-midpoint",
           "vector-effect": "non-scaling-stroke",
+          style: { "pointer-events": "none" },
           r: 4
         });
+        this.on("selected", (selected) => selected ? this.el.Primary.classList.add("selected") : this.el.Primary.classList.remove("selected"));
+        this.on("selected", (selected) => selected ? this.el.Midpoint.classList.add("selected") : this.el.Midpoint.classList.remove("selected"));
+        const select = new Select({
+          component: this,
+          handle: this.el.PrimaryBg
+        });
+        this.destructable = () => focus.destroy();
         this.on("name", (name) => update(this.el.Primary, { name }));
         this.on("node", (node) => {
           node.on("from", (v) => this.from = v);
@@ -12058,6 +12114,7 @@
         this.any(["x1", "y1", "x2", "y2"], ({ x1, y1, x2, y2 }) => {
           const [x3, y3] = edgepoint(x1, y1, 12, x1, y1, x2, y2);
           const [x4, y4] = edgepoint(x2, y2, -12, x1, y1, x2, y2);
+          update(this.el.PrimaryBg, { x1: x3, y1: y3, x2: x4, y2: y4 });
           update(this.el.Primary, { x1: x3, y1: y3, x2: x4, y2: y4 });
         });
         this.appendElements();

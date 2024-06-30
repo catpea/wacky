@@ -61,10 +61,10 @@ export default class Anchor {
 
       this.on("selected", selected => selected?this.el.Pad.classList.add('selected'):this.el.Pad.classList.remove('selected'));
 
-      const select = new Select({
-        component: this,
-        handle: this.el.Pad,
-      }); this.destructable = ()=>select.destroy()
+      // const select = new Select({
+      //   component: this,
+      //   handle: this.el.Pad,
+      // }); this.destructable = ()=>select.destroy()
 
 
       this.pad = this.el.Pad;

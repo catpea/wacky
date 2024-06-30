@@ -5,14 +5,19 @@ const cheerio = bundle['cheerio'];
 
 import {Instance} from "/plug-ins/object-oriented-programming/index.js";
 import Window from "/plug-ins/components/Window.js";
+import KeyboardMonitor from "/plug-ins/keyboard-monitor/KeyboardMonitor.js";
 
 export default class Workspace {
   static extends = [Window];
 
+ 
   methods = {
 
     initialize(){
       console.log('Workspace Initialize!');
+
+      this.keyboard = new KeyboardMonitor({});
+      this.destructable = ()=>this.keyboard.destroy();
 
     },
 

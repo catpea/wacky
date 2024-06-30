@@ -84,7 +84,7 @@ export default class CodeMirror {
       // codemirror.setSize(this.w, this.h);
 
       // HACK: code mirror inside a foreign element does not correctly receive focus - we monitor for its parent's click and manually set focus
-      this.destructable = click(div, ()=>this.editorView.focus())
+      this.addDisposableFromEvent( div, 'click', ()=>this.editorView.focus() );
 
       this.on('doc', value=>{
         const doc = String(value);
