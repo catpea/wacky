@@ -7105,18 +7105,18 @@
 
   // package.json
   var package_default = {
-    name: "kerfuffle",
+    name: "wacky",
     version: "1.0.2",
     description: "User Friendly Visual Programming Language",
     author: "catpea",
     repository: {
       type: "git",
-      url: "git+https://github.com/catpea/visual-programming-language.git"
+      url: "git+https://github.com/catpea/wacky.git"
     },
     bugs: {
-      url: "https://github.com/catpea/visual-programming-language/issues"
+      url: "https://github.com/catpea/wacky/issues"
     },
-    homepage: "https://github.com/catpea/visual-programming-language#readme",
+    homepage: "https://github.com/catpea/wacky#readme",
     type: "module",
     main: "index.js",
     scripts: {

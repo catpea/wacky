@@ -1,5 +1,7 @@
 # wacky
-Visual Programming Language
+A Visual Programming Language
+
+wacky /wăk′ē/ - informal - unusual in a pleasing or exciting way // zany, ludicrous, silly
 
 ## TODO
 
