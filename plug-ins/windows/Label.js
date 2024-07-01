@@ -78,7 +78,7 @@ export default class Label {
       }
 
 
-      if(0){
+      if(0){ // NOTE: RESIZABLE LABELS - lol (this is legacy code - easter egg)
         globalThis.project.on('zoom', v=> requestAnimationFrame(() => {
           updateZUI(this.el.Caption, { style: {scale:1/globalThis.project.zoom}, x: (this.x+this.s)*globalThis.project.zoom, y: (this.y+this.s)*globalThis.project.zoom, }, {style: {scale:1}, x: (this.x+this.s), y: (this.y+this.s), })
           updateZUI(clipPathRect, { x: this.x*globalThis.project.zoom, y: this.y*globalThis.project.zoom, width: this.w*globalThis.project.zoom, height: this.h*globalThis.project.zoom, }, { x: this.x, y: this.y, width: this.w, height: this.h})
@@ -90,10 +90,6 @@ export default class Label {
       this.el.Caption.appendChild(captionText);
 
       this.on("selected", selected => selected?this.el.Container.classList.add('selected'):this.el.Container.classList.remove('selected'));
-
-      // this.disposable = click( this.el.Container, e=>{
-      //   // console.log('CLICKED', this.parent.data.id, this, this.parent);
-      // });
 
       this.on('name',  name=>update(this.el.Container,{name}), );
       this.on('w',  width=>update(this.el.Container,{width}), );

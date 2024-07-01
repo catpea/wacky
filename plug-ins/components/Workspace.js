@@ -10,28 +10,20 @@ import KeyboardMonitor from "/plug-ins/keyboard-monitor/KeyboardMonitor.js";
 export default class Workspace {
   static extends = [Window];
 
- 
   methods = {
 
     initialize(){
       console.log('Workspace Initialize!');
-
-      this.keyboard = new KeyboardMonitor({});
-      this.destructable = ()=>this.keyboard.destroy();
-
+      // NOTE: this is the main keyboard handler that components may subscribe to via getRoot()
+      this.keyboard = new KeyboardMonitor();
+      this.addDisposable(this.keyboard);
     },
 
     saveXml(){
-      console.log('Workspace/saveXml called...');
-
       const $ = cheerio.load(`<?xml version="1.0"?><${this.oo.name} name="${pkg.name}" description="${pkg.description}" version="${pkg.version}"></${this.oo.name}>`, { xmlMode: true, decodeEntities: true, withStartIndices: true, withEndIndices: true });
-      console.clear();
       if (this.pane) {
-
-          $(this.oo.name).append(this.pane.getXml());
-
+        $(this.oo.name).append(this.pane.getXml());
       }
-
       const xml = $.root().html();
       console.log(xml);
       return xml;

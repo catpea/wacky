@@ -16,22 +16,29 @@ export default class Sockets {
 
   traits = {
 
-        createSocket(name, side){
-          if(!name) throw new Error(`It is not possible to create an socket without an socket name.`);
-          if(!side===undefined) throw new Error(`It is not possible to create an socket without specifying a side, 0 or 1.`);
-          const id = [this.id, name].join('/');
-          const socket = new Instance(Socket, { id, name, side, parent: this.parent, control:this, scene: this.scene } )
-          this.sockets.create(socket);
-        },
+    createSocket(name, side){
+      if(!name) throw new Error(`It is not possible to create an socket without an socket name.`);
+      if(!side===undefined) throw new Error(`It is not possible to create an socket without specifying a side, 0 or 1.`);
+      const id = [this.id, name].join('/');
+      const socket = new Instance(Socket, { id, name, side, parent: this.parent, control:this, scene: this.scene } )
+      this.sockets.create(socket);
+    },
 
-        removeSocket(id){
-          this.sockets.remove(id);
-        },
+    removeSocket(id){
+      this.sockets.remove(id);
+    },
 
-        send(name, packet){
-          // this.sockets.get([this.id, name].join('/')).emit(name, packet);
-          this.pipe.emit(name, packet);
-        }
+    send(name, packet){
+      this.pipe.emit(name, packet);
+    },
+
+    pipe(name){
+      const id = [name, this.getRootContainer().id].join(':');
+      const origin = globalThis.project.origins.get(this.getRootContainer().node.origin); // root container always has a node, node always has an origin, origin has a root
+      const pipe = origin.root.pipes.get(id);
+      return pipe;
+    },
+
   };
 
   methods = {

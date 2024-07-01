@@ -30,17 +30,11 @@ export default class Architecture {
           }
       });
 
-       stopWheel(this.foreign.body);
-    },
-
-    stop(){
-      console.log('todo: stopping root application');
+    this.addDisposable( stopWheel(this.foreign.body) );
     },
 
     destroy(){
-      console.log('todo: destroying root application');
       this.component.$destroy();
-      this.dispose()
     },
 
   };

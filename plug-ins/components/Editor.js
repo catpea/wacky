@@ -25,61 +25,36 @@ export default class Editor {
       this.foreign = new Instance(Foreign);
       this.createWindowComponent( this.foreign );
 
+      const extensions = [
+        basicSetup,
+        javascript(),
+        EditorView.lineWrapping, //NOTE: EditorView.lineWrapping does/did not honor code indents
+        keymap.of([indentWithTab]),
+        // EditorView.updateListener.of((update) => {if (update.docChanged) value = update.state.doc.toString(); }),
+        oneDark,
+        EditorView.theme({
 
+          '&': { maxHeight: this.h + 'px' },
+          '.cm-gutter,.cm-content': { minHeight: '100px' },
+          ".cm-scroller": {
+            overflow: "auto",
+            borderTopLeftRadius: '0px',
+            borderTopLeftRadius: '0px',
+            borderBottomLeftRadius: '0px',
+            borderBottomRightRadius: '0px',
+         },
+        })
+      ];
 
+      this.editorView = new EditorView({
+        doc: ("// Hello!\njavaScript.go('Brrrrr...');\n"),
+        extensions,
+        parent: this.foreign.body
+      });
 
-            const extensions = [
-              basicSetup,
-              javascript(),
-              EditorView.lineWrapping, //NOTE: EditorView.lineWrapping does/did not honor code indents
-              keymap.of([indentWithTab]),
-              // EditorView.updateListener.of((update) => {if (update.docChanged) value = update.state.doc.toString(); }),
-              oneDark,
-              EditorView.theme({
-
-                '&': { maxHeight: this.h + 'px' },
-                '.cm-gutter,.cm-content': { minHeight: '100px' },
-                ".cm-scroller": {
-                  overflow: "auto",
-                  borderTopLeftRadius: '0px',
-                  borderTopLeftRadius: '0px',
-                  borderBottomLeftRadius: '0px',
-                  borderBottomRightRadius: '0px',
-               },
-              })
-            ];
-
-
-            this.editorView = new EditorView({
-              doc: ("// Hello!\njavaScript.go('Brrrrr...');\n"),
-              extensions,
-              parent: this.foreign.body
-            });
-
-            // this.any(['w','h'], ({w,h})=>this.editorView.setSize(w, h));
-
-
-
-            // HACK: code mirror inside a foreign element does not correctly receive focus - we monitor for its parent's click and manually set focus
-            this.destructable = click(this.foreign.body, ()=>this.editorView.focus())
-
-            // this.on('doc', value=>{
-            //   const doc = String(value);
-            //   const editorState = EditorState.create({ doc, extensions });
-            //   this.editorView.setState( editorState );
-            // });
-
-
-
-    },
-
-    stop(){
-      console.log('todo: stopping root application');
-    },
-
-    destroy(){
-      console.log('todo: destroying root application');
-      this.dispose()
+      // HACK: code mirror inside a foreign element does not correctly receive focus - we monitor for its parent's click and manually set focus
+      this.addDisposableFromEvent( this.foreign.body, 'click', ()=>this.editorView.focus() );
+      this.addDisposable(this.editorView); // Clean up this editor view, removing its element from the document, unregistering event handlers, and notifying plugins. The view instance can no longer be used after calling this. (https://codemirror.net/docs/ref/#view.EditorView.destroy)
     },
 
   };

@@ -46,7 +46,8 @@ export default class Foreign {
 
       this.el.ForeignObject.appendChild(this.body);
 
-      this.addDisposableFromEvent( this.body, 'keydown', (e)=>e.stopImmediatePropagation() )
+      // NOTE: WARNING: Foreign.js cancels event bubbling
+      this.addDisposableFromEvent( this.body, 'keydown', e=>e.stopImmediatePropagation())
 
       this.on('name', name=>update(this.el.ForeignObject,{name}));
       this.on('w', width=>update(this.el.ForeignObject,{width}));

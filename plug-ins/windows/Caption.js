@@ -46,22 +46,14 @@ export default class Caption {
       const [horizontal, [ info1, maximizeButton ]] = nest(Horizontal, { parent:this, scene:this.scene, s:2  }, [
         [Label, {h: 24,       text: this.text, parent:this, r:3}, (c,p)=>p.children.create(c)],
         [Label, {h: 24, W:24, text: '++', parent:this , r:3}, (c,p)=>p.children.create(c)],
-      ], (c)=>this.addDisposableFromMethods(c, 'stop destroy'));
+      ], (c)=>this.addDisposableFromMethods(c, 'stop destroy')); // <-- once created components are sent here, they can be added to garbage collection
 
       this.handle = info1.el.Container;
-      horizontal.start()
+      horizontal.start();
 
       this.on("selected", selected => selected?info1.el.Container.classList.add('selected'):info1.el.Container.classList.remove('selected'));
       this.on('text',  text=>info1.text=text, );
-
       this.any(['x','y','w','h',  ],  ({x,y,w,h})=>Object.assign(horizontal, {x,y,w,h }));
-
-
-
-
-
-
-
 
       let maximized = false;
       const parent = this.getApplication().parent?this.getApplication().parent.getApplication():this.getRootContainer();

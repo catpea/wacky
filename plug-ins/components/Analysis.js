@@ -12,18 +12,12 @@ import { writable } from 'svelte/store'
 export default class Analysis {
   static extends = [Application];
 
-  properties = {
-  };
-
   methods = {
-
-
 
     initialize(){
       this.createSocket('in', 0);
-
-
     },
+
     mount(){
 
       this.foreign = new Instance(Foreign);
@@ -31,6 +25,7 @@ export default class Analysis {
 
       this.xWritable = writable(0);
       this.yWritable = writable(0);
+
       this.component = new Interface({
           target: this.foreign.body,
           props: {
@@ -41,27 +36,17 @@ export default class Analysis {
           }
       });
 
-      stopWheel(this.foreign.body);
+      this.addDisposable( stopWheel(this.foreign.body) );
 
       this.pipe.on('in', (packet)=>{
         const object = packet.object||this.getRoot().applications.get(packet.id);
         this.component.$set({ object});
-        // this.connectObservableToWritable( object, 'x', this, 'xWritable', (v)=>v.toFixed(2))
-        // this.connectObservableToWritable( object, 'y', this, 'yWritable', (v)=>v.toFixed(2))
-
-        console.log(object);
       })
 
     },
 
-    stop(){
-      console.log('todo: stopping root application');
-    },
-
     destroy(){
-      console.log('todo: destroying root application');
       this.component.$destroy();
-      this.dispose()
     },
 
   };

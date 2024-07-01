@@ -1,10 +1,10 @@
-import Objective from "/plug-ins/windows/Objective.js";
+import Disposable from "/plug-ins/windows/Disposable.js";
 
 import { svg, update } from "/plug-ins/domek/index.js"
 
 export default class Component {
 
-  static extends = [Objective];
+  static extends = [Disposable];
 
   properties = {
     id: uuid(),
@@ -25,7 +25,6 @@ export default class Component {
 
     name:  undefined,
 
-
     x: 0,
     y: 0,
 
@@ -44,14 +43,17 @@ export default class Component {
   };
 
   constraints = {
+
     scene: {
       '.scene must be an instance of HTMLElement': function(){ if(!(obj instanceof HTMLElement)) return {error: 'Not an HTMLElement'}}
     },
+
     mount: {
       '.scene is required to start': function(){ if(!this.data){return {error:'data missing'}} },
       '.node is required to start': function(){ if(!this.node){return {error:'node missing'}} },
       '.node must be an observable object': function(){ if(!this.node.on){return {error:'.on missing on .node'}} },
     }
+
   }
 
   traits = {
@@ -64,7 +66,6 @@ export default class Component {
         ry: this.r,
         'stroke-width': 0,
         'vector-effect': 'non-scaling-stroke',
-
         // set initial values
         // these are special, handeled by the layout manager
         // NOTE: these are observables, getter returns a value, setter notifies listeners, and you can ```this.observe('x', v=>{...})```
@@ -73,37 +74,29 @@ export default class Component {
         x: this.x,
         y: this.y,
       });
-
       this.getApplication().on("node", (node) => {
-          this.el.ComponentBackground.classList.add(node.type.toLowerCase());
+        this.el.ComponentBackground.classList.add(node.type.toLowerCase());
       });
-
       this.on('name',  name=>update(this.el.ComponentBackground,{name}), );
       this.on('w',  width=>update(this.el.ComponentBackground,{width}), );
       this.on('h', height=>update(this.el.ComponentBackground,{height}),);
       this.on('x',      x=>update(this.el.ComponentBackground,{x}),     );
       this.on('y',      y=>update(this.el.ComponentBackground,{y}),     );
       this.on('r',     ry=>update(this.el.ComponentBackground,{ry}),     );
-
       this.appendElements();
     },
 
     allAnchors(parent, list=[]){
-
       if(parent?.children){
         for (const child of parent.children) {
-
           if(child.anchors?.length){
             for (const anchor of child.anchors) {
               list.push(anchor);
             }
           }
-
           this.allAnchors(child, list)
-
         }
       }
-
       return list;
     },
 
@@ -115,21 +108,6 @@ export default class Component {
       Object.values(this.el).forEach(el => el.remove());
     },
 
-    getRandomIntInclusive(min, max) {
-      const minCeiled = Math.ceil(min);
-      const maxFloored = Math.floor(max);
-      return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled); // The maximum is inclusive and the minimum is inclusive
-    },
-
-    pipe(name){
-      const id = [name, this.getRootContainer().id].join(':');
-      const origin = globalThis.project.origins.get(this.getRootContainer().node.origin); // root container always has a node, node always has an origin, origin has a root
-      const pipe = origin.root.pipes.get(id);
-      return pipe;
-    },
-
-
-
     getRootContainer() {
       let response = null;
       if(!this.parent){
@@ -140,9 +118,6 @@ export default class Component {
       return response;
     },
 
-
-
-
     getRoot() {
       let response = null;
       if(!this.parent){
@@ -152,9 +127,6 @@ export default class Component {
       }
       return response;
     },
-
-
-
 
     getStack(element, list=[]) {
       if(!element) element = this;
@@ -168,6 +140,7 @@ export default class Component {
       const scale = list.map(o=>o.zoom).reduce((a,c)=>a*c, 1) ;
       return scale;
     },
+
     getScale(component){
       const list = this.getTransforms(component);
       const scale = list.map(o=>o.zoom).reduce((a,c)=>a*c, 1) ;
@@ -210,9 +183,9 @@ export default class Component {
 
   methods = {
 
-
     initialize(){
       this.on("node", (node) => {
+
         node.on("x", x => this.x = x);
         node.on("y", y => this.y = y);
         node.on("w", w => this.w = w);
@@ -222,20 +195,18 @@ export default class Component {
         node.on("b", b => this.b = b);
         node.on("p", p => this.p = p);
         node.on("s", s => this.s = s);
+
         // node carries a .data property
         node.on("data", data => this.data = data);
         if(node.content){this.content = node.content};
+
       });
     },
 
     destroy(){
+      this.dispose();
       this.removeElements();
-    }
-
-
-
-
-
+    },
 
   }
 

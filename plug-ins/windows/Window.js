@@ -89,7 +89,7 @@ export default class Window {
           after: ()=>{},
         });
 
-        this.destructable = ()=>resize.destroy();
+        this.addDisposable(resize);
 
       }
 
@@ -105,14 +105,12 @@ export default class Window {
 
 
       if(this.showCaption){
-
         let caption = new Instance(Caption, {h: 24, text: this.caption});
         this.on('caption', v=>caption.text=v)
         this.createWindowComponent(caption);
         this.on("node", (node) => {
           if(node.caption) node.on("caption", caption => this.caption = caption);
         });
-
         const move = new Move({
           area: window,
           handle: caption.handle,
@@ -124,8 +122,7 @@ export default class Window {
           },
           after: ()=>{},
         });
-
-        this.destructable = ()=>move.destroy();
+        this.addDisposable(move);
       }
 
 
@@ -135,22 +132,8 @@ export default class Window {
         component: this,
         element: ()=> this.scene,
       });
-      this.destructable = ()=>focus.destroy()
-
-      // const select = new Select({
-      //   component: this,
-      //   handle: caption.handle,
-      // }); this.destructable = ()=>focus.destroy()
-      // this.on("selected", selected => caption.selected = selected);
-
-
-
-
-
-
-
-
-
+      this.addDisposable(focus);
+      
     },
 
 

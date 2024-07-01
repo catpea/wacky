@@ -30,11 +30,11 @@ export default class KeyboardMonitor extends CuteEmitter {
 		}
 
 		console.log('BBB MONITOR UP');
-		this.source.addEventListener('keydown', this.keyDownListener, true);
+		this.source.addEventListener('keydown', this.keyDownListener);
 	}
 
 	destroy() {
-		this.handle.removeEventListener('keydown', this.keyDownListener, true);
+		this.handle.removeEventListener('keydown', this.keyDownListener);
 	}
 
 

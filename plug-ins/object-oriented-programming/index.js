@@ -366,6 +366,15 @@ export class Instance {
     }
 
     this.any = function(observables, ...functions){
+      disposable(this.anyManual(observables, ...functions));
+    }
+
+    this.all = function(observables, ...functions){
+      disposable(this.allManual(observables, ...functions));
+    }
+
+
+    this.anyManual = function(observables, ...functions){
       if(typeof observables === 'string') observables = observables.split(' ');
       const callback2 = ()=>{
         const entries = observables.map(key => [key, this[key]])
@@ -376,7 +385,7 @@ export class Instance {
       return observables.map(event=>this.on(event, callback2, undefined, {manualDispose: true}));
     }
 
-    this.all = function(observables, ...functions){
+    this.allManual = function(observables, ...functions){
       if(typeof observables === 'string') observables = observables.split(' ');
 
       const callback2 = ()=>{

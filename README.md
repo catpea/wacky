@@ -5,15 +5,28 @@ wacky /wăk′ē/ - informal - unusual in a pleasing or exciting way // zany, lu
 
 ## TODO
 
+- [ ] How to stop  and destroy a component, should the node be destouer first ?? make sure that node.on is correctly destroyed!!!
+
+---
+
+- [ ] any and all are not automatically collected check for manual garbage collection attempts
+- [ ] this.pipe.on needs to be destructible
+
+---
+
 - [ ] Selection Manager
 - [ ] Convert Selection To Window
 - [ ] Selete Connection
 - [ ] Delete Component
 - [ ] Resizable Components
 
+---
+
 - [ ] Minimize Window To A Window Face
 - [ ] Face
 - [ ] Face Toolbox
+
+---
 
 - [ ] Non-Selectable Text
 - [ ] Function Node

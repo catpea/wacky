@@ -17,9 +17,8 @@ export default class Application {
 
   traits = {
 
-
     /**
-    USAGE:
+    connectObservableToWritable USAGE:
     this.xWritable = writable(0);
     this.yWritable = writable(0);
     this.component = new Interface({
@@ -35,27 +34,26 @@ export default class Application {
     this.connectObservableToWritable( object, 'y', this, 'yWritable', (v)=>v.toFixed(2))
 
     **/
-    connectObservableToWritable(fromObject, property, toObject, writable, transform){
-
+    connectObservableToWritable(fromObject /* CUSTOM OPP NOT A STANDARD OBJECT */, observableName, toObject, writableName, transform){
       if(!this.oo.scratch.couplers){
         this.oo.scratch.couplers = {};
-        this.disposable = ()=>{ Object.values(this.oo.scratch.couplers).map(f=>f())}; // clean any remaining couplers
+        this.addDisposable({
+          description: `clean any remaining couplers when component is shut down`,
+          destroy(){Object.values(this.oo.scratch.couplers).map(f=>f())}
+        });
       }
-      let id = property;
+      let id = observableName;
       if(this.oo.scratch.couplers[id]) this.oo.scratch.couplers[id](); // execute destructable
-      this.oo.scratch.couplers[id] = fromObject.on(property, (v)=>toObject[writable].set(transform?transform(v):v),{autorun:true},{manualDispose:true});
+      const disposable = fromObject.on(observableName, (v)=>toObject[writableName].set(transform?transform(v):v),{autorun:true},{manualDispose:true});
+      this.oo.scratch.couplers[id] = disposable;
 
     },
   };
 
   methods = {
-
     initialize(){
       this.controller = new EventEmitter();
       this.getRoot().applications.create(this);
-      console.log('XXXX', this.getRoot().id, this.id, );
     },
-
-
   };
 }

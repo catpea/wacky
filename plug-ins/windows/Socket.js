@@ -12,7 +12,8 @@ export default class Anchor {
   static extends = [Component];
 
   properties = {
-    pad: null
+    pad: null,
+    selectable: false,
   };
 
   observables = {
@@ -59,13 +60,14 @@ export default class Anchor {
         cy: this.y,
       });
 
-      this.on("selected", selected => selected?this.el.Pad.classList.add('selected'):this.el.Pad.classList.remove('selected'));
-
-      // const select = new Select({
-      //   component: this,
-      //   handle: this.el.Pad,
-      // }); this.destructable = ()=>select.destroy()
-
+      if(this.selectable){
+        this.on("selected", selected => selected?this.el.Pad.classList.add('selected'):this.el.Pad.classList.remove('selected'));
+        const select = new Select({
+          component: this,
+          handle: this.el.Pad,
+        });
+        this.addDisposable(select);
+      }
 
       this.pad = this.el.Pad;
 
@@ -83,7 +85,7 @@ export default class Anchor {
         scene: this.scene,
         component: this,
       });
-      this.destructable = ()=>connect.destroy();
+      this.addDisposable(connect);
 
     },
 

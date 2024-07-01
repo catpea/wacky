@@ -6592,6 +6592,12 @@
         }
       };
       this.any = function(observables, ...functions) {
+        disposable(this.anyManual(observables, ...functions));
+      };
+      this.all = function(observables, ...functions) {
+        disposable(this.allManual(observables, ...functions));
+      };
+      this.anyManual = function(observables, ...functions) {
         if (typeof observables === "string")
           observables = observables.split(" ");
         const callback2 = /* @__PURE__ */ __name(() => {
@@ -6601,7 +6607,7 @@
         }, "callback2");
         return observables.map((event) => this.on(event, callback2, void 0, { manualDispose: true }));
       };
-      this.all = function(observables, ...functions) {
+      this.allManual = function(observables, ...functions) {
         if (typeof observables === "string")
           observables = observables.split(" ");
         const callback2 = /* @__PURE__ */ __name(() => {
@@ -7232,20 +7238,12 @@
     }
   }
   __name(front, "front");
-  function click(element2, callback) {
-    element2.addEventListener("mouseup", handler);
-    function handler(event) {
-      callback(event);
-    }
-    __name(handler, "handler");
-    return () => element2.removeEventListener("mouseup", handler);
-  }
-  __name(click, "click");
 
   // plug-ins/disposable/index.js
   function createDisposableListener(element2, eventType, callback, options) {
-    element2.addEventListener(eventType, callback);
+    element2.addEventListener(eventType, callback, options);
     return {
+      description: "Return an object with a destroy method to remove the event listener",
       destroy() {
         element2.removeEventListener(eventType, callback, options);
       }
@@ -7254,15 +7252,33 @@
   __name(createDisposableListener, "createDisposableListener");
 
   // plug-ins/windows/Objective.js
-  var Container = class {
+  var Objective = class {
     static {
-      __name(this, "Container");
+      __name(this, "Objective");
     }
+    traits = {
+      // Low-level Object Oriented Programming Helpers For Windows
+      getRandomIntInclusive(min, max) {
+        const minCeiled = Math.ceil(min);
+        const maxFloored = Math.floor(max);
+        return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);
+      }
+    };
+  };
+
+  // plug-ins/windows/Disposable.js
+  var Disposable = class {
+    static {
+      __name(this, "Disposable");
+    }
+    static extends = [Objective];
     traits = {
       // Low-level Object Oriented Programming Helpers For Windows
       addDisposable(disposable) {
         if (disposable.destroy) {
           this.oo.disposables.push(() => disposable.destroy());
+        } else if (disposable.dispose) {
+          this.oo.disposables.push(() => disposable.dispose());
         } else if (typeof disposable === "function") {
           this.oo.disposables.push(disposable);
         } else {
@@ -7278,6 +7294,14 @@
       addDisposableFromEvent(element2, eventType, callback, options) {
         this.addDisposable(createDisposableListener(element2, eventType, callback, options));
       },
+      addDisposableFromEmitter(emitter, eventName, callback, options) {
+        emitter.on(eventName, callback);
+        this.addDisposable({
+          destroy() {
+            emitter.removeListener(eventName, callback);
+          }
+        });
+      },
       addDisposableFromSmartEmitter(emitter, eventName, callback, options) {
         this.addDisposable(emitter.on(eventName, callback, options));
       }
@@ -7289,7 +7313,7 @@
     static {
       __name(this, "Component");
     }
-    static extends = [Container];
+    static extends = [Disposable];
     properties = {
       id: uuid(),
       el: {},
@@ -7399,17 +7423,6 @@
       removeElements() {
         Object.values(this.el).forEach((el) => el.remove());
       },
-      getRandomIntInclusive(min, max) {
-        const minCeiled = Math.ceil(min);
-        const maxFloored = Math.floor(max);
-        return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);
-      },
-      pipe(name) {
-        const id2 = [name, this.getRootContainer().id].join(":");
-        const origin = globalThis.project.origins.get(this.getRootContainer().node.origin);
-        const pipe = origin.root.pipes.get(id2);
-        return pipe;
-      },
       getRootContainer() {
         let response = null;
         if (!this.parent) {
@@ -7498,6 +7511,7 @@
         });
       },
       destroy() {
+        this.dispose();
         this.removeElements();
       }
     };
@@ -7689,7 +7703,8 @@
     }
     static extends = [Component];
     properties = {
-      pad: null
+      pad: null,
+      selectable: false
     };
     observables = {
       control: null,
@@ -7726,7 +7741,14 @@
           cx: this.x,
           cy: this.y
         });
-        this.on("selected", (selected) => selected ? this.el.Pad.classList.add("selected") : this.el.Pad.classList.remove("selected"));
+        if (this.selectable) {
+          this.on("selected", (selected) => selected ? this.el.Pad.classList.add("selected") : this.el.Pad.classList.remove("selected"));
+          const select = new Select({
+            component: this,
+            handle: this.el.Pad
+          });
+          this.addDisposable(select);
+        }
         this.pad = this.el.Pad;
         this.on("name", (name) => update(this.el.Pad, { name }));
         this.on("x", (cx) => update(this.el.Pad, { cx }));
@@ -7741,7 +7763,7 @@
           scene: this.scene,
           component: this
         });
-        this.destructable = () => connect.destroy();
+        this.addDisposable(connect);
       },
       destroy() {
         this.removeElements();
@@ -7996,6 +8018,12 @@
       },
       send(name, packet) {
         this.pipe.emit(name, packet);
+      },
+      pipe(name) {
+        const id2 = [name, this.getRootContainer().id].join(":");
+        const origin = globalThis.project.origins.get(this.getRootContainer().node.origin);
+        const pipe = origin.root.pipes.get(id2);
+        return pipe;
       }
     };
     methods = {
@@ -8024,7 +8052,7 @@
   };
 
   // plug-ins/windows/Container.js
-  var Container2 = class {
+  var Container = class {
     static {
       __name(this, "Container");
     }
@@ -8060,7 +8088,7 @@
     static {
       __name(this, "Vertical");
     }
-    static extends = [Container2];
+    static extends = [Container];
     methods = {
       initialize() {
         this.layout = new VerticalLayout(this);
@@ -8140,7 +8168,7 @@
     static {
       __name(this, "Horizontal");
     }
-    static extends = [Container2];
+    static extends = [Container];
     methods = {
       initialize() {
         this.layout = new HorizontalLayout(this);
@@ -8538,7 +8566,7 @@
             after: () => {
             }
           });
-          this.destructable = () => resize.destroy();
+          this.addDisposable(resize);
         }
       },
       mount() {
@@ -8566,15 +8594,15 @@
             after: () => {
             }
           });
-          this.destructable = () => move.destroy();
+          this.addDisposable(move);
         }
-        const focus2 = new Focus({
+        const focus = new Focus({
           handle: this.scene,
           // TIP: set to caption above to react to window captions only
           component: this,
           element: () => this.scene
         });
-        this.destructable = () => focus2.destroy();
+        this.addDisposable(focus);
       }
     };
     constraints = {};
@@ -8596,7 +8624,7 @@
     };
     traits = {
       /**
-          USAGE:
+          connectObservableToWritable USAGE:
           this.xWritable = writable(0);
           this.yWritable = writable(0);
           this.component = new Interface({
@@ -8612,24 +8640,27 @@
           this.connectObservableToWritable( object, 'y', this, 'yWritable', (v)=>v.toFixed(2))
       
           **/
-      connectObservableToWritable(fromObject, property, toObject, writable2, transform) {
+      connectObservableToWritable(fromObject, observableName, toObject, writableName, transform) {
         if (!this.oo.scratch.couplers) {
           this.oo.scratch.couplers = {};
-          this.disposable = () => {
-            Object.values(this.oo.scratch.couplers).map((f) => f());
-          };
+          this.addDisposable({
+            description: `clean any remaining couplers when component is shut down`,
+            destroy() {
+              Object.values(this.oo.scratch.couplers).map((f) => f());
+            }
+          });
         }
-        let id2 = property;
+        let id2 = observableName;
         if (this.oo.scratch.couplers[id2])
           this.oo.scratch.couplers[id2]();
-        this.oo.scratch.couplers[id2] = fromObject.on(property, (v) => toObject[writable2].set(transform ? transform(v) : v), { autorun: true }, { manualDispose: true });
+        const disposable = fromObject.on(observableName, (v) => toObject[writableName].set(transform ? transform(v) : v), { autorun: true }, { manualDispose: true });
+        this.oo.scratch.couplers[id2] = disposable;
       }
     };
     methods = {
       initialize() {
         this.controller = new EventEmitter();
         this.getRoot().applications.create(this);
-        console.log("XXXX", this.getRoot().id, this.id);
       }
     };
   };
@@ -8857,7 +8888,7 @@
     static {
       __name(this, "Viewport");
     }
-    static extends = [Container2];
+    static extends = [Container];
     properties = {
       debugBody: false,
       debugContent: false,
@@ -11108,26 +11139,49 @@
   };
   var Menu_default = Menu2;
 
+  // plug-ins/constants/index.js
+  function constants_default(CONSTANTS) {
+    const constants = Object.fromEntries(CONSTANTS.split(" ").map((o) => o.trim()).filter((o) => o).map((o) => [o, o]));
+    return new Proxy(constants, {
+      get(target, prop) {
+        if (prop in target) {
+          return target[prop];
+        } else {
+          throw new Error(`Attempt to access undefined constant '${prop}'. Check for typos!`);
+        }
+      }
+    });
+  }
+  __name(constants_default, "default");
+
   // plug-ins/stop-wheel/index.js
+  var Action = constants_default(" SCROLL ZOOM ");
   function stopWheel(el) {
-    el.addEventListener("wheel", (e) => {
+    function wheelHandler(e) {
       const hasVerticalScrollbar = el.clientHeight < el.scrollHeight;
       const hasHorizontalScrollbar = el.clientWidth < el.scrollWidth;
       const isHoldingShiftKey = e.shiftKey;
-      let action = "zoom";
+      let action = Action.ZOOM;
       if (hasVerticalScrollbar)
-        action = "scroll";
+        action = Action.SCROLL;
       if (isHoldingShiftKey)
-        action = "zoom";
-      if (action == "zoom") {
+        action = Action.ZOOM;
+      if (action == Action.ZOOM) {
         e.preventDefault();
         return false;
       }
       ;
-      if (action == "scroll") {
+      if (action == Action.SCROLL) {
         e.stopPropagation();
       }
-    });
+    }
+    __name(wheelHandler, "wheelHandler");
+    el.addEventListener("wheel", wheelHandler);
+    return {
+      destroy() {
+        el.removeEventListener("wheel", wheelHandler);
+      }
+    };
   }
   __name(stopWheel, "stopWheel");
 
@@ -11171,7 +11225,7 @@
           target: this.foreign.body,
           control: this.control
         });
-        stopWheel(this.foreign.body);
+        this.addDisposable(stopWheel(this.foreign.body));
         this.on("options", (options) => this.ui.$set({ options }));
         this.foreign.body.addEventListener("click", (e) => {
           this.parent.closeMenu();
@@ -11382,10 +11436,10 @@
         self.emit(keyboard_default[e.key]);
       };
       console.log("BBB MONITOR UP");
-      this.source.addEventListener("keydown", this.keyDownListener, true);
+      this.source.addEventListener("keydown", this.keyDownListener);
     }
     destroy() {
-      this.handle.removeEventListener("keydown", this.keyDownListener, true);
+      this.handle.removeEventListener("keydown", this.keyDownListener);
     }
   };
 
@@ -11400,13 +11454,11 @@
     methods = {
       initialize() {
         console.log("Workspace Initialize!");
-        this.keyboard = new KeyboardMonitor({});
-        this.destructable = () => this.keyboard.destroy();
+        this.keyboard = new KeyboardMonitor();
+        this.addDisposable(this.keyboard);
       },
       saveXml() {
-        console.log("Workspace/saveXml called...");
         const $ = cheerio2.load(`<?xml version="1.0"?><${this.oo.name} name="${package_default.name}" description="${package_default.description}" version="${package_default.version}"></${this.oo.name}>`, { xmlMode: true, decodeEntities: true, withStartIndices: true, withEndIndices: true });
-        console.clear();
         if (this.pane) {
           $(this.oo.name).append(this.pane.getXml());
         }
@@ -11835,6 +11887,7 @@
           cursorBlink: true
           // allowProposedApi: true
         });
+        this.addDisposable(term);
         const fitAddon = new FitAddon();
         term.loadAddon(fitAddon);
         term.open(this.foreign.body);
@@ -11850,7 +11903,7 @@
           term.focus();
         });
         var command = "";
-        this.disposables = term.onData((e) => {
+        const dataHandler = /* @__PURE__ */ __name((e) => {
           console.log("term.onData", e);
           switch (e) {
             case "":
@@ -11875,7 +11928,8 @@
                 term.write(e);
               }
           }
-        });
+        }, "dataHandler");
+        this.addDisposable(term.onData(dataHandler));
         function prompt(term2) {
           command = "";
           term2.write("\r\n$ ");
@@ -11930,13 +11984,6 @@
         }
         __name(runCommand, "runCommand");
         runFakeTerm();
-      },
-      stop() {
-        console.log("todo: stopping root application");
-      },
-      destroy() {
-        console.log("todo: destroying root application");
-        this.dispose();
       }
     };
   };
@@ -11983,14 +12030,8 @@
           extensions,
           parent: this.foreign.body
         });
-        this.destructable = click(this.foreign.body, () => this.editorView.focus());
-      },
-      stop() {
-        console.log("todo: stopping root application");
-      },
-      destroy() {
-        console.log("todo: destroying root application");
-        this.dispose();
+        this.addDisposableFromEvent(this.foreign.body, "click", () => this.editorView.focus());
+        this.addDisposable(this.editorView);
       }
     };
   };
@@ -12067,7 +12108,7 @@
           component: this,
           handle: this.el.PrimaryBg
         });
-        this.destructable = () => focus.destroy();
+        this.addDisposable(select);
         this.on("name", (name) => update(this.el.Primary, { name }));
         this.on("node", (node) => {
           node.on("from", (v) => this.from = v);
@@ -12075,7 +12116,7 @@
           node.on("out", (v) => this.out = v);
           node.on("in", (v) => this.in = v);
         });
-        this.desctructible = this.any("from out", ({ from: nodeId, out: portName }) => {
+        this.any("from out", ({ from: nodeId, out: portName }) => {
           const socketId = [nodeId, portName].join("/");
           console.log("from out", socketId, this.getApplication().id);
           console.log(`this.any from out (application=${this.getApplication().id})`, this.getApplication().pane.elements.raw.map((o) => o.id));
@@ -12084,7 +12125,7 @@
           socket.on("x", (x) => this.x1 = x);
           socket.on("y", (y) => this.y1 = y);
         });
-        this.desctructible = this.any("to in", ({ to: nodeId, in: portName }) => {
+        this.any("to in", ({ to: nodeId, in: portName }) => {
           const socketId = [nodeId, portName].join("/");
           console.log("to in", socketId);
           const socket = this.getApplication().socketRegistry.get(socketId);
@@ -12092,7 +12133,7 @@
           socket.on("y", (y) => this.y2 = y);
         });
         this.connectionId = null;
-        this.desctructible = this.all("from out to in", (o) => {
+        this.all("from out to in", (o) => {
           let connectionId = [o.from, o.out, o.to, o.in].join("+");
           if (this.connectionId == connectionId) {
             console.log("DUPE", this.connectionId);
@@ -12104,7 +12145,7 @@
             const socket2 = [o.to, o.in].join("/");
             const control1 = this.getApplication().socketRegistry.get(socket1).control;
             const control2 = this.getApplication().socketRegistry.get(socket2).control;
-            control1.pipe.on(o.out, (packet) => control2.pipe.emit(o.in, packet));
+            this.addDisposableFromEmitter(control1.pipe, o.out, (packet) => control2.pipe.emit(o.in, packet));
             this.connectionId = connectionId;
           } else {
             console.log("DISCO", [o.from, o.out, o.to, o.in]);
@@ -13014,15 +13055,10 @@
             tree: stores_default.getApplicationTree(this)
           }
         });
-        stopWheel(this.foreign.body);
-      },
-      stop() {
-        console.log("todo: stopping root application");
+        this.addDisposable(stopWheel(this.foreign.body));
       },
       destroy() {
-        console.log("todo: destroying root application");
         this.component.$destroy();
-        this.dispose();
       }
     };
   };
@@ -14743,7 +14779,6 @@
       __name(this, "Analysis");
     }
     static extends = [Application];
-    properties = {};
     methods = {
       initialize() {
         this.createSocket("in", 0);
@@ -14762,20 +14797,14 @@
             paneItems: stores_default2.getPaneItems(this.getRoot())
           }
         });
-        stopWheel(this.foreign.body);
+        this.addDisposable(stopWheel(this.foreign.body));
         this.pipe.on("in", (packet) => {
           const object = packet.object || this.getRoot().applications.get(packet.id);
           this.component.$set({ object });
-          console.log(object);
         });
       },
-      stop() {
-        console.log("todo: stopping root application");
-      },
       destroy() {
-        console.log("todo: destroying root application");
         this.component.$destroy();
-        this.dispose();
       }
     };
   };

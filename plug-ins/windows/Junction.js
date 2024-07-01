@@ -52,24 +52,28 @@ export default class Junction {
         handle: this.el.Primary,
         window: this,
         zone: window,
-      }); this.destructable = ()=>move.destroy()
+      });
+      this.addDisposable(move);
 
       const focus = new Focus({
         component: this,
         handle: this.scene, // set to caption above to react to window captions only
-      }); this.destructable = ()=>focus.destroy()
+      });
+      this.addDisposable(focus);
 
       const select = new Select({
         component: this,
         handle: this.el.Primary,
-      }); this.destructable = ()=>select.destroy()
+      });
+      this.addDisposable(select);
+
 
       this.appendElements();
 
       const inputAnchor = this.createControlAnchor({ name: 'input', side:  0, r:4});
       const outputAnchor = this.createControlAnchor({ name: 'output', side: 1, r:4});
-      
-      this.pipe('input').on('data', (data)=>this.pipe('output').emit('data', data))
+
+      this.addDisposableFromEmitter(this.pipe('input'), 'data', (data)=>this.pipe('output').emit('data', data))
 
       this.on('name', name=>update(this.el.Primary,{name}) );
       this.on('x',      cx=>update(this.el.Primary,{cx})   );

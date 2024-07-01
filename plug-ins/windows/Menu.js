@@ -53,7 +53,8 @@ export default class Menu {
         target: this.foreign.body,
         control: this.control,
       });
-      stopWheel(this.foreign.body);
+
+      this.addDisposable( stopWheel(this.foreign.body) );
 
       this.on('options', options=> this.ui.$set({options}));
 

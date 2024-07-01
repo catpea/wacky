@@ -68,7 +68,8 @@ export default class Connector {
       const select = new Select({
         component: this,
         handle: this.el.PrimaryBg,
-      }); this.destructable = ()=>focus.destroy()
+      });
+      this.addDisposable(select);
 
       this.on('name',  name=>update(this.el.Primary,{name}), );
 
@@ -80,7 +81,7 @@ export default class Connector {
       });
 
 
-      this.desctructible = this.any('from out', ({from:nodeId, out:portName})=>{
+      this.any('from out', ({from:nodeId, out:portName})=>{
         const socketId = [nodeId, portName].join('/');
         console.log('from out', socketId, this.getApplication().id);
         console.log(`this.any from out (application=${this.getApplication().id})`, this.getApplication().pane.elements.raw.map(o=>o.id));
@@ -91,7 +92,7 @@ export default class Connector {
         socket.on('y', y=>this.y1=y)
       });
 
-      this.desctructible = this.any('to in', ({to:nodeId, in:portName})=>{
+      this.any('to in', ({to:nodeId, in:portName})=>{
         const socketId = [nodeId, portName].join('/');
         console.log('to in', socketId);
         const socket = this.getApplication().socketRegistry.get(socketId);
@@ -100,7 +101,7 @@ export default class Connector {
       });
 
       this.connectionId = null;
-      this.desctructible = this.all('from out to in', o=>{
+      this.all('from out to in', o=>{
 
         let connectionId = [o.from, o.out, o.to, o.in].join('+');
 
@@ -116,7 +117,7 @@ export default class Connector {
           const socket2 = [o.to, o.in].join('/');
           const control1 = this.getApplication().socketRegistry.get(socket1).control;
           const control2 = this.getApplication().socketRegistry.get(socket2).control;
-          control1.pipe.on(o.out, packet=>control2.pipe.emit(o.in, packet));
+          this.addDisposableFromEmitter(control1.pipe, o.out, packet=>control2.pipe.emit(o.in, packet));
           this.connectionId = connectionId;
         }else{
           console.log('DISCO', [o.from, o.out, o.to, o.in]);
@@ -125,48 +126,6 @@ export default class Connector {
 
       })
 
-      // this.on('source', id=>{
-      //   if(!id) throw new Error(`Primary requires source id`);
-      //   if(!id.includes(':')) throw new Error(`Id must contain ":".`);
-      //   // const component = id.includes(':')?globalThis.project.anchors.get( id ):globalThis.project.applications.get( id );
-      //   const origin = globalThis.project.origins.get(this.getRootContainer().node.origin); // root container always has a node, node always has an origin, origin has a root
-      //
-      //   const component = origin.root.anchors.get( id );
-      //   component.on('x', x=>this.x1=x)
-      //   component.on('y', y=>this.y1=y)
-      //
-      //
-      // });
-      //
-      // this.on('target',  id=>{
-      //   if(!id) throw new Error(`Primary requires target id`);
-      //   if(!id.includes(':')) throw new Error(`Id must contain ":".`);
-      //   // const component = id.includes(':')?globalThis.project.anchors.get( id ):globalThis.project.applications.get( id );
-      //   const origin = globalThis.project.origins.get(this.getRootContainer().node.origin); // root container always has a node, node always has an origin, origin has a root
-      //   const component = origin.root.anchors.get( id );
-      //   component.on('x', x=>this.x2=x)
-      //   component.on('y', y=>this.y2=y)
-      // });
-      //
-      //
-      // this.all(['source', 'target'], ({source, target})=>{
-      //   const origin = globalThis.project.origins.get(this.getRootContainer().node.origin); // root container always has a node, node always has an origin, origin has a root
-      //   globalThis.project.pipe(origin, source, target );
-      // })
-      // // ;
-
-
-      // this.on('x1',      x1=>update(this.el.Primary,{x1}),     );
-      // this.on('y1',      y1=>update(this.el.Primary,{y1}),     );
-      // this.on('x2',      x2=>update(this.el.Primary,{x2}),     );
-      // this.on('y2',      y2=>update(this.el.Primary,{y2}),     );
-      //
-      // this.on('x1',      x1=>update(this.el.Primary,{x1}),     );
-      // this.on('y1',      y1=>update(this.el.Primary,{y1}),     );
-      // this.on('x2',      x2=>update(this.el.Primary,{x2}),     );
-      // this.on('y2',      y2=>update(this.el.Primary,{y2}),     );
-
-      // this.any(['x1','y1','x2','y2'], packet=> update(this.el.Primary, packet));
       this.any(['x1','y1','x2','y2'], packet=> update(this.el.Midpoint, midpoint(packet)));
 
       this.any(['x1','y1','x2','y2'], ({x1, y1, x2, y2}) => {
@@ -174,7 +133,6 @@ export default class Connector {
         const [x4,y4] = edgepoint(x2, y2, -12, x1, y1, x2, y2);
         update(this.el.PrimaryBg, {x1:x3, y1:y3, x2:x4, y2:y4})
         update(this.el.Primary, {x1:x3, y1:y3, x2:x4, y2:y4})
-        // console.log(this.el.Primary, {x1:x3, y1:y3, x2:x4, y2:y4});
       });
 
 

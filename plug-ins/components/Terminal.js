@@ -22,6 +22,7 @@ export default class Terminal {
         cursorBlink: true,
         // allowProposedApi: true
       });
+      this.addDisposable(term); // term has a .dispose() https://xtermjs.org/docs/api/terminal/classes/terminal/#dispose
 
 
 
@@ -46,7 +47,7 @@ export default class Terminal {
 
       var command = '';
 
-      this.disposables = term.onData(e => {
+      const dataHandler = e => {
         console.log('term.onData', e);
         switch (e) {
           case '\u0003': // Ctrl+C
@@ -72,7 +73,9 @@ export default class Terminal {
               term.write(e);
             }
         }
-      });
+      };
+
+      this.addDisposable( term.onData(dataHandler) );
 
 
       function prompt(term) {
@@ -149,15 +152,6 @@ export default class Terminal {
 
 
       runFakeTerm();
-    },
-
-    stop(){
-      console.log('todo: stopping root application');
-    },
-
-    destroy(){
-      console.log('todo: destroying root application');
-      this.dispose()
     },
 
   };
