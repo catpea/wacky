@@ -106,7 +106,7 @@ svg.editor-interface {
     /* fill: url("#editor-secondary-gradient"); */
     fill: var(--editor-background-secondary);
 }
-.viewport-background.window {
+.viewport-background.group {
     stroke: var(--editor-border);
     /* fill: url("#editor-secondary-gradient"); */
     fill: var(--editor-background-secondary);

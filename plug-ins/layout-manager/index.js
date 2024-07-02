@@ -34,6 +34,11 @@ export class Layout {
 
 	manage(child) {
 		// called whn a child is added
+		console.log('TODO: layout manage child');
+	}
+	forget(child) {
+		// called whn a child is added
+		console.log('TODO: layout forget child');
 	}
 
 	calculateChildW() {

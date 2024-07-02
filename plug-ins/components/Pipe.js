@@ -9,8 +9,13 @@ export default class Pipe {
     serializables: 'id from to out in'.split(' ')
   };
 
+  observables = {
+    selected: false,
+  };
+
   methods = {
     initialize(){
+
       this.showCaption = false;
       this.isResizable = false;
 
@@ -26,6 +31,10 @@ export default class Pipe {
         in: this.node.in,
       });
 
+      this.connector.on('selected', v=>this.selected=v)
+
+      // this.parent.node.on("from", v => this.pipe.from = v);
+
       this.node.on("from", v => this.pipe.from = v);
       this.node.on("to", v => this.pipe.to = v);
       this.node.on("out", v => this.pipe.out = v);
@@ -33,16 +42,14 @@ export default class Pipe {
 
       this.connector.start();
 
-
     },
 
-    stop(){
-      console.log('todo: stopping root application');
+    clean(){
+      this.connector.stop();
     },
 
     destroy(){
-      console.log('todo: destroying root application');
-      this.dispose()
+
     },
 
   };

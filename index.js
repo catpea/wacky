@@ -440,8 +440,8 @@
                 var qualifiedName;
                 switch (elementName.type) {
                   case jsx_syntax_1.JSXSyntax.JSXIdentifier:
-                    var id2 = elementName;
-                    qualifiedName = id2.name;
+                    var id = elementName;
+                    qualifiedName = id.name;
                     break;
                   case jsx_syntax_1.JSXSyntax.JSXNamespacedName:
                     var ns = elementName;
@@ -615,10 +615,10 @@
                         break;
                       }
                     }
-                    var id2 = this.scanner.source.slice(start, this.scanner.index);
+                    var id = this.scanner.source.slice(start, this.scanner.index);
                     return {
                       type: 100,
-                      value: id2,
+                      value: id,
                       lineNumber: this.scanner.lineNumber,
                       lineStart: this.scanner.lineStart,
                       start,
@@ -1168,9 +1168,9 @@
               }();
               exports2.AsyncArrowFunctionExpression = AsyncArrowFunctionExpression;
               var AsyncFunctionDeclaration = /* @__PURE__ */ function() {
-                function AsyncFunctionDeclaration2(id2, params, body) {
+                function AsyncFunctionDeclaration2(id, params, body) {
                   this.type = syntax_1.Syntax.FunctionDeclaration;
-                  this.id = id2;
+                  this.id = id;
                   this.params = params;
                   this.body = body;
                   this.generator = false;
@@ -1182,9 +1182,9 @@
               }();
               exports2.AsyncFunctionDeclaration = AsyncFunctionDeclaration;
               var AsyncFunctionExpression = /* @__PURE__ */ function() {
-                function AsyncFunctionExpression2(id2, params, body) {
+                function AsyncFunctionExpression2(id, params, body) {
                   this.type = syntax_1.Syntax.FunctionExpression;
-                  this.id = id2;
+                  this.id = id;
                   this.params = params;
                   this.body = body;
                   this.generator = false;
@@ -1264,9 +1264,9 @@
               }();
               exports2.ClassBody = ClassBody;
               var ClassDeclaration = /* @__PURE__ */ function() {
-                function ClassDeclaration2(id2, superClass, body) {
+                function ClassDeclaration2(id, superClass, body) {
                   this.type = syntax_1.Syntax.ClassDeclaration;
-                  this.id = id2;
+                  this.id = id;
                   this.superClass = superClass;
                   this.body = body;
                 }
@@ -1275,9 +1275,9 @@
               }();
               exports2.ClassDeclaration = ClassDeclaration;
               var ClassExpression = /* @__PURE__ */ function() {
-                function ClassExpression2(id2, superClass, body) {
+                function ClassExpression2(id, superClass, body) {
                   this.type = syntax_1.Syntax.ClassExpression;
-                  this.id = id2;
+                  this.id = id;
                   this.superClass = superClass;
                   this.body = body;
                 }
@@ -1436,9 +1436,9 @@
               }();
               exports2.ForStatement = ForStatement;
               var FunctionDeclaration = /* @__PURE__ */ function() {
-                function FunctionDeclaration2(id2, params, body, generator) {
+                function FunctionDeclaration2(id, params, body, generator) {
                   this.type = syntax_1.Syntax.FunctionDeclaration;
-                  this.id = id2;
+                  this.id = id;
                   this.params = params;
                   this.body = body;
                   this.generator = generator;
@@ -1450,9 +1450,9 @@
               }();
               exports2.FunctionDeclaration = FunctionDeclaration;
               var FunctionExpression = /* @__PURE__ */ function() {
-                function FunctionExpression2(id2, params, body, generator) {
+                function FunctionExpression2(id, params, body, generator) {
                   this.type = syntax_1.Syntax.FunctionExpression;
-                  this.id = id2;
+                  this.id = id;
                   this.params = params;
                   this.body = body;
                   this.generator = generator;
@@ -1803,9 +1803,9 @@
               }();
               exports2.VariableDeclaration = VariableDeclaration;
               var VariableDeclarator = /* @__PURE__ */ function() {
-                function VariableDeclarator2(id2, init2) {
+                function VariableDeclarator2(id, init2) {
                   this.type = syntax_1.Syntax.VariableDeclarator;
-                  this.id = id2;
+                  this.id = id;
                   this.init = init2;
                 }
                 __name(VariableDeclarator2, "VariableDeclarator");
@@ -2466,11 +2466,11 @@
                   var shorthand = false;
                   var isAsync = false;
                   if (token.type === 3) {
-                    var id2 = token.value;
+                    var id = token.value;
                     this.nextToken();
                     computed = this.match("[");
-                    isAsync = !this.hasLineTerminator && id2 === "async" && !this.match(":") && !this.match("(") && !this.match("*") && !this.match(",");
-                    key = isAsync ? this.parseObjectPropertyKey() : this.finalize(node, new Node2.Identifier(id2));
+                    isAsync = !this.hasLineTerminator && id === "async" && !this.match(":") && !this.match("(") && !this.match("*") && !this.match(",");
+                    key = isAsync ? this.parseObjectPropertyKey() : this.finalize(node, new Node2.Identifier(id));
                   } else if (this.match("*")) {
                     this.nextToken();
                   } else {
@@ -2513,16 +2513,16 @@
                       value = isAsync ? this.parsePropertyMethodAsyncFunction() : this.parsePropertyMethodFunction();
                       method = true;
                     } else if (token.type === 3) {
-                      var id2 = this.finalize(node, new Node2.Identifier(token.value));
+                      var id = this.finalize(node, new Node2.Identifier(token.value));
                       if (this.match("=")) {
                         this.context.firstCoverInitializedNameError = this.lookahead;
                         this.nextToken();
                         shorthand = true;
                         var init2 = this.isolateCoverGrammar(this.parseAssignmentExpression);
-                        value = this.finalize(node, new Node2.AssignmentPattern(id2, init2));
+                        value = this.finalize(node, new Node2.AssignmentPattern(id, init2));
                       } else {
                         shorthand = true;
-                        value = id2;
+                        value = id;
                       }
                     } else {
                       this.throwUnexpectedToken(this.nextToken());
@@ -2758,14 +2758,14 @@
                 };
                 Parser2.prototype.parseNewExpression = function() {
                   var node = this.createNode();
-                  var id2 = this.parseIdentifierName();
-                  assert_1.assert(id2.name === "new", "New expression must start with `new`");
+                  var id = this.parseIdentifierName();
+                  assert_1.assert(id.name === "new", "New expression must start with `new`");
                   var expr;
                   if (this.match(".")) {
                     this.nextToken();
                     if (this.lookahead.type === 3 && this.context.inFunctionBody && this.lookahead.value === "target") {
                       var property = this.parseIdentifierName();
-                      expr = new Node2.MetaProperty(id2, property);
+                      expr = new Node2.MetaProperty(id, property);
                     } else {
                       this.throwUnexpectedToken(this.lookahead);
                     }
@@ -3195,11 +3195,11 @@
                           this.tolerateError(messages_1.Messages.InvalidLHSInAssignment);
                         }
                         if (this.context.strict && expr.type === syntax_1.Syntax.Identifier) {
-                          var id2 = expr;
-                          if (this.scanner.isRestrictedWord(id2.name)) {
+                          var id = expr;
+                          if (this.scanner.isRestrictedWord(id.name)) {
                             this.tolerateUnexpectedToken(token, messages_1.Messages.StrictLHSAssignment);
                           }
-                          if (this.scanner.isStrictModeReservedWord(id2.name)) {
+                          if (this.scanner.isStrictModeReservedWord(id.name)) {
                             this.tolerateUnexpectedToken(token, messages_1.Messages.StrictReservedWord);
                           }
                         }
@@ -3291,9 +3291,9 @@
                 Parser2.prototype.parseLexicalBinding = function(kind, options) {
                   var node = this.createNode();
                   var params = [];
-                  var id2 = this.parsePattern(params, kind);
-                  if (this.context.strict && id2.type === syntax_1.Syntax.Identifier) {
-                    if (this.scanner.isRestrictedWord(id2.name)) {
+                  var id = this.parsePattern(params, kind);
+                  if (this.context.strict && id.type === syntax_1.Syntax.Identifier) {
+                    if (this.scanner.isRestrictedWord(id.name)) {
                       this.tolerateError(messages_1.Messages.StrictVarName);
                     }
                   }
@@ -3307,11 +3307,11 @@
                         this.throwError(messages_1.Messages.DeclarationMissingInitializer, "const");
                       }
                     }
-                  } else if (!options.inFor && id2.type !== syntax_1.Syntax.Identifier || this.match("=")) {
+                  } else if (!options.inFor && id.type !== syntax_1.Syntax.Identifier || this.match("=")) {
                     this.expect("=");
                     init2 = this.isolateCoverGrammar(this.parseAssignmentExpression);
                   }
-                  return this.finalize(node, new Node2.VariableDeclarator(id2, init2));
+                  return this.finalize(node, new Node2.VariableDeclarator(id, init2));
                 };
                 Parser2.prototype.parseBindingList = function(kind, options) {
                   var list = [this.parseLexicalBinding(kind, options)];
@@ -3464,9 +3464,9 @@
                 Parser2.prototype.parseVariableDeclaration = function(options) {
                   var node = this.createNode();
                   var params = [];
-                  var id2 = this.parsePattern(params, "var");
-                  if (this.context.strict && id2.type === syntax_1.Syntax.Identifier) {
-                    if (this.scanner.isRestrictedWord(id2.name)) {
+                  var id = this.parsePattern(params, "var");
+                  if (this.context.strict && id.type === syntax_1.Syntax.Identifier) {
+                    if (this.scanner.isRestrictedWord(id.name)) {
                       this.tolerateError(messages_1.Messages.StrictVarName);
                     }
                   }
@@ -3474,10 +3474,10 @@
                   if (this.match("=")) {
                     this.nextToken();
                     init2 = this.isolateCoverGrammar(this.parseAssignmentExpression);
-                  } else if (id2.type !== syntax_1.Syntax.Identifier && !options.inFor) {
+                  } else if (id.type !== syntax_1.Syntax.Identifier && !options.inFor) {
                     this.expect("=");
                   }
-                  return this.finalize(node, new Node2.VariableDeclarator(id2, init2));
+                  return this.finalize(node, new Node2.VariableDeclarator(id, init2));
                 };
                 Parser2.prototype.parseVariableDeclarationList = function(options) {
                   var opt = { inFor: options.inFor };
@@ -3708,11 +3708,11 @@
                   this.expectKeyword("continue");
                   var label = null;
                   if (this.lookahead.type === 3 && !this.hasLineTerminator) {
-                    var id2 = this.parseVariableIdentifier();
-                    label = id2;
-                    var key = "$" + id2.name;
+                    var id = this.parseVariableIdentifier();
+                    label = id;
+                    var key = "$" + id.name;
                     if (!Object.prototype.hasOwnProperty.call(this.context.labelSet, key)) {
-                      this.throwError(messages_1.Messages.UnknownLabel, id2.name);
+                      this.throwError(messages_1.Messages.UnknownLabel, id.name);
                     }
                   }
                   this.consumeSemicolon();
@@ -3726,12 +3726,12 @@
                   this.expectKeyword("break");
                   var label = null;
                   if (this.lookahead.type === 3 && !this.hasLineTerminator) {
-                    var id2 = this.parseVariableIdentifier();
-                    var key = "$" + id2.name;
+                    var id = this.parseVariableIdentifier();
+                    var key = "$" + id.name;
                     if (!Object.prototype.hasOwnProperty.call(this.context.labelSet, key)) {
-                      this.throwError(messages_1.Messages.UnknownLabel, id2.name);
+                      this.throwError(messages_1.Messages.UnknownLabel, id.name);
                     }
-                    label = id2;
+                    label = id;
                   }
                   this.consumeSemicolon();
                   if (label === null && !this.context.inIteration && !this.context.inSwitch) {
@@ -3822,10 +3822,10 @@
                   var statement;
                   if (expr.type === syntax_1.Syntax.Identifier && this.match(":")) {
                     this.nextToken();
-                    var id2 = expr;
-                    var key = "$" + id2.name;
+                    var id = expr;
+                    var key = "$" + id.name;
                     if (Object.prototype.hasOwnProperty.call(this.context.labelSet, key)) {
-                      this.throwError(messages_1.Messages.Redeclaration, "Label", id2.name);
+                      this.throwError(messages_1.Messages.Redeclaration, "Label", id.name);
                     }
                     this.context.labelSet[key] = true;
                     var body = void 0;
@@ -3845,7 +3845,7 @@
                       body = this.parseStatement();
                     }
                     delete this.context.labelSet[key];
-                    statement = new Node2.LabeledStatement(id2, body);
+                    statement = new Node2.LabeledStatement(id, body);
                   } else {
                     this.consumeSemicolon();
                     statement = new Node2.ExpressionStatement(expr);
@@ -4117,11 +4117,11 @@
                     this.nextToken();
                   }
                   var message;
-                  var id2 = null;
+                  var id = null;
                   var firstRestricted = null;
                   if (!identifierIsOptional || !this.match("(")) {
                     var token = this.lookahead;
-                    id2 = this.parseVariableIdentifier();
+                    id = this.parseVariableIdentifier();
                     if (this.context.strict) {
                       if (this.scanner.isRestrictedWord(token.value)) {
                         this.tolerateUnexpectedToken(token, messages_1.Messages.StrictFunctionName);
@@ -4161,7 +4161,7 @@
                   this.context.allowStrictDirective = previousAllowStrictDirective;
                   this.context.await = previousAllowAwait;
                   this.context.allowYield = previousAllowYield;
-                  return isAsync ? this.finalize(node, new Node2.AsyncFunctionDeclaration(id2, params, body)) : this.finalize(node, new Node2.FunctionDeclaration(id2, params, body, isGenerator));
+                  return isAsync ? this.finalize(node, new Node2.AsyncFunctionDeclaration(id, params, body)) : this.finalize(node, new Node2.FunctionDeclaration(id, params, body, isGenerator));
                 };
                 Parser2.prototype.parseFunctionExpression = function() {
                   var node = this.createNode();
@@ -4175,7 +4175,7 @@
                     this.nextToken();
                   }
                   var message;
-                  var id2 = null;
+                  var id = null;
                   var firstRestricted;
                   var previousAllowAwait = this.context.await;
                   var previousAllowYield = this.context.allowYield;
@@ -4183,7 +4183,7 @@
                   this.context.allowYield = !isGenerator;
                   if (!this.match("(")) {
                     var token = this.lookahead;
-                    id2 = !this.context.strict && !isGenerator && this.matchKeyword("yield") ? this.parseIdentifierName() : this.parseVariableIdentifier();
+                    id = !this.context.strict && !isGenerator && this.matchKeyword("yield") ? this.parseIdentifierName() : this.parseVariableIdentifier();
                     if (this.context.strict) {
                       if (this.scanner.isRestrictedWord(token.value)) {
                         this.tolerateUnexpectedToken(token, messages_1.Messages.StrictFunctionName);
@@ -4219,7 +4219,7 @@
                   this.context.allowStrictDirective = previousAllowStrictDirective;
                   this.context.await = previousAllowAwait;
                   this.context.allowYield = previousAllowYield;
-                  return isAsync ? this.finalize(node, new Node2.AsyncFunctionExpression(id2, params, body)) : this.finalize(node, new Node2.FunctionExpression(id2, params, body, isGenerator));
+                  return isAsync ? this.finalize(node, new Node2.AsyncFunctionExpression(id, params, body)) : this.finalize(node, new Node2.FunctionExpression(id, params, body, isGenerator));
                 };
                 Parser2.prototype.parseDirective = function() {
                   var token = this.lookahead;
@@ -4363,8 +4363,8 @@
                   } else {
                     computed = this.match("[");
                     key = this.parseObjectPropertyKey();
-                    var id2 = key;
-                    if (id2.name === "static" && (this.qualifiedPropertyName(this.lookahead) || this.match("*"))) {
+                    var id = key;
+                    if (id.name === "static" && (this.qualifiedPropertyName(this.lookahead) || this.match("*"))) {
                       token = this.lookahead;
                       isStatic = true;
                       computed = this.match("[");
@@ -4460,7 +4460,7 @@
                   var previousStrict = this.context.strict;
                   this.context.strict = true;
                   this.expectKeyword("class");
-                  var id2 = identifierIsOptional && this.lookahead.type !== 3 ? null : this.parseVariableIdentifier();
+                  var id = identifierIsOptional && this.lookahead.type !== 3 ? null : this.parseVariableIdentifier();
                   var superClass = null;
                   if (this.matchKeyword("extends")) {
                     this.nextToken();
@@ -4468,14 +4468,14 @@
                   }
                   var classBody = this.parseClassBody();
                   this.context.strict = previousStrict;
-                  return this.finalize(node, new Node2.ClassDeclaration(id2, superClass, classBody));
+                  return this.finalize(node, new Node2.ClassDeclaration(id, superClass, classBody));
                 };
                 Parser2.prototype.parseClassExpression = function() {
                   var node = this.createNode();
                   var previousStrict = this.context.strict;
                   this.context.strict = true;
                   this.expectKeyword("class");
-                  var id2 = this.lookahead.type === 3 ? this.parseVariableIdentifier() : null;
+                  var id = this.lookahead.type === 3 ? this.parseVariableIdentifier() : null;
                   var superClass = null;
                   if (this.matchKeyword("extends")) {
                     this.nextToken();
@@ -4483,7 +4483,7 @@
                   }
                   var classBody = this.parseClassBody();
                   this.context.strict = previousStrict;
-                  return this.finalize(node, new Node2.ClassExpression(id2, superClass, classBody));
+                  return this.finalize(node, new Node2.ClassExpression(id, superClass, classBody));
                 };
                 Parser2.prototype.parseModule = function() {
                   this.context.strict = true;
@@ -5068,8 +5068,8 @@
                   }
                   return comments;
                 };
-                Scanner2.prototype.isFutureReservedWord = function(id2) {
-                  switch (id2) {
+                Scanner2.prototype.isFutureReservedWord = function(id) {
+                  switch (id) {
                     case "enum":
                     case "export":
                     case "import":
@@ -5079,8 +5079,8 @@
                       return false;
                   }
                 };
-                Scanner2.prototype.isStrictModeReservedWord = function(id2) {
-                  switch (id2) {
+                Scanner2.prototype.isStrictModeReservedWord = function(id) {
+                  switch (id) {
                     case "implements":
                     case "interface":
                     case "package":
@@ -5095,27 +5095,27 @@
                       return false;
                   }
                 };
-                Scanner2.prototype.isRestrictedWord = function(id2) {
-                  return id2 === "eval" || id2 === "arguments";
+                Scanner2.prototype.isRestrictedWord = function(id) {
+                  return id === "eval" || id === "arguments";
                 };
-                Scanner2.prototype.isKeyword = function(id2) {
-                  switch (id2.length) {
+                Scanner2.prototype.isKeyword = function(id) {
+                  switch (id.length) {
                     case 2:
-                      return id2 === "if" || id2 === "in" || id2 === "do";
+                      return id === "if" || id === "in" || id === "do";
                     case 3:
-                      return id2 === "var" || id2 === "for" || id2 === "new" || id2 === "try" || id2 === "let";
+                      return id === "var" || id === "for" || id === "new" || id === "try" || id === "let";
                     case 4:
-                      return id2 === "this" || id2 === "else" || id2 === "case" || id2 === "void" || id2 === "with" || id2 === "enum";
+                      return id === "this" || id === "else" || id === "case" || id === "void" || id === "with" || id === "enum";
                     case 5:
-                      return id2 === "while" || id2 === "break" || id2 === "catch" || id2 === "throw" || id2 === "const" || id2 === "yield" || id2 === "class" || id2 === "super";
+                      return id === "while" || id === "break" || id === "catch" || id === "throw" || id === "const" || id === "yield" || id === "class" || id === "super";
                     case 6:
-                      return id2 === "return" || id2 === "typeof" || id2 === "delete" || id2 === "switch" || id2 === "export" || id2 === "import";
+                      return id === "return" || id === "typeof" || id === "delete" || id === "switch" || id === "export" || id === "import";
                     case 7:
-                      return id2 === "default" || id2 === "finally" || id2 === "extends";
+                      return id === "default" || id === "finally" || id === "extends";
                     case 8:
-                      return id2 === "function" || id2 === "continue" || id2 === "debugger";
+                      return id === "function" || id === "continue" || id === "debugger";
                     case 10:
-                      return id2 === "instanceof";
+                      return id === "instanceof";
                     default:
                       return false;
                   }
@@ -5182,8 +5182,8 @@
                 };
                 Scanner2.prototype.getComplexIdentifier = function() {
                   var cp = this.codePointAt(this.index);
-                  var id2 = character_1.Character.fromCodePoint(cp);
-                  this.index += id2.length;
+                  var id = character_1.Character.fromCodePoint(cp);
+                  this.index += id.length;
                   var ch;
                   if (cp === 92) {
                     if (this.source.charCodeAt(this.index) !== 117) {
@@ -5199,7 +5199,7 @@
                         this.throwUnexpectedToken();
                       }
                     }
-                    id2 = ch;
+                    id = ch;
                   }
                   while (!this.eof()) {
                     cp = this.codePointAt(this.index);
@@ -5207,10 +5207,10 @@
                       break;
                     }
                     ch = character_1.Character.fromCodePoint(cp);
-                    id2 += ch;
+                    id += ch;
                     this.index += ch.length;
                     if (cp === 92) {
-                      id2 = id2.substr(0, id2.length - 1);
+                      id = id.substr(0, id.length - 1);
                       if (this.source.charCodeAt(this.index) !== 117) {
                         this.throwUnexpectedToken();
                       }
@@ -5224,10 +5224,10 @@
                           this.throwUnexpectedToken();
                         }
                       }
-                      id2 += ch;
+                      id += ch;
                     }
                   }
-                  return id2;
+                  return id;
                 };
                 Scanner2.prototype.octalToDecimal = function(ch) {
                   var octal = ch !== "0";
@@ -5247,19 +5247,19 @@
                 Scanner2.prototype.scanIdentifier = function() {
                   var type;
                   var start = this.index;
-                  var id2 = this.source.charCodeAt(start) === 92 ? this.getComplexIdentifier() : this.getIdentifier();
-                  if (id2.length === 1) {
+                  var id = this.source.charCodeAt(start) === 92 ? this.getComplexIdentifier() : this.getIdentifier();
+                  if (id.length === 1) {
                     type = 3;
-                  } else if (this.isKeyword(id2)) {
+                  } else if (this.isKeyword(id)) {
                     type = 4;
-                  } else if (id2 === "null") {
+                  } else if (id === "null") {
                     type = 5;
-                  } else if (id2 === "true" || id2 === "false") {
+                  } else if (id === "true" || id === "false") {
                     type = 1;
                   } else {
                     type = 3;
                   }
-                  if (type !== 3 && start + id2.length !== this.index) {
+                  if (type !== 3 && start + id.length !== this.index) {
                     var restore = this.index;
                     this.index = start;
                     this.tolerateUnexpectedToken(messages_1.Messages.InvalidEscapedReservedWord);
@@ -5267,7 +5267,7 @@
                   }
                   return {
                     type,
-                    value: id2,
+                    value: id,
                     lineNumber: this.lineNumber,
                     lineStart: this.lineStart,
                     start,
@@ -6385,13 +6385,18 @@
       this.instance = instance10;
       this.instance.oo.extends.push(Class);
       this.collectClasses(Class.extends);
+      console.log("PPP all", this.instance.oo.extends);
       this.instantiateSuperclasses();
     }
     collectClasses(list) {
       if (!Array.isArray(list))
         return;
-      for (const Class of list) {
+      for (const Class of list.filter((o) => o)) {
+        console.log(Class);
         this.instance.oo.extends.push(Class);
+      }
+      for (const Class of list.filter((o) => o)) {
+        console.log(Class);
         this.collectClasses(Class.extends);
       }
     }
@@ -6442,14 +6447,14 @@
           can: "stop"
         },
         stop: {
-          run: "destroy",
-          can: "start"
+          run: "clean destroy exit",
+          can: "initial"
         }
       };
       const ensureArray = /* @__PURE__ */ __name(function(input) {
         if (Array.isArray(input))
           return input;
-        return [input];
+        return input.split(" ");
       }, "ensureArray");
       const isStateTransitionAllowed = /* @__PURE__ */ __name(function({ from, to, state: state2 }) {
         return ensureArray(state2[from].can).includes(to);
@@ -6561,8 +6566,20 @@
         configurable: false
       });
       this.dispose = () => {
-        disposables.map((f) => f());
-        this.oo.disposables.map((f) => f());
+        for (const disposable2 of disposables) {
+          if (typeof disposable2 === "function") {
+            disposable2();
+          } else {
+            console.error("Bad Disposable", disposable2);
+          }
+        }
+        for (const disposable2 of this.oo.disposables) {
+          if (typeof disposable2 === "function") {
+            disposable2();
+          } else {
+            console.error("Bad Disposable", disposable2);
+          }
+        }
       };
       const that = this;
       this.oo.getMethods = function() {
@@ -6592,10 +6609,10 @@
         }
       };
       this.any = function(observables, ...functions) {
-        disposable(this.anyManual(observables, ...functions));
+        disposable(...this.anyManual(observables, ...functions));
       };
       this.all = function(observables, ...functions) {
-        disposable(this.allManual(observables, ...functions));
+        disposable(...this.allManual(observables, ...functions));
       };
       this.anyManual = function(observables, ...functions) {
         if (typeof observables === "string")
@@ -6632,7 +6649,8 @@
         }
       }, "stateConstraint");
       const state = specification.state || defaultState;
-      for (const [stateName2, stateValue] of Object.entries(state).filter(([stateName3, stateValue2]) => stateName3 !== "current")) {
+      const stateNames = Object.entries(state).filter(([stateName2, stateValue]) => stateName2 !== "current");
+      for (const [stateName2, stateValue] of stateNames) {
         if (stateName2 in this === false) {
           const stateFunction = function() {
             const currentState = state.current;
@@ -6650,10 +6668,12 @@
             }
             const stateFunctions2 = ensureArray(state[stateName2].run);
             for (const functionName of stateFunctions2) {
-              if (functionName in this === false)
-                throw new Error(`Initialize: Class ${specification.constructor.name} has no function named ${functionName}`);
-              stateConstraint(stateConstraints, functionName);
-              this[functionName]();
+              if (functionName in this === false) {
+                console.info(`Initialize: Class ${specification.constructor.name} has no function named ${functionName}`);
+              } else {
+                stateConstraint(stateConstraints, functionName);
+                this[functionName]();
+              }
             }
             state.current = stateName2;
           }.bind(this);
@@ -6663,6 +6683,8 @@
             enumerable: true,
             configurable: false
           });
+        } else {
+          throw new Error(`Lol, state name "${stateName2}" is used for something else in Class ${this.oo.name}. That is absolutley not allowed, as switching between states would have been destroyed. Other reserved names are: ${stateNames.map(([stateName3, configuration]) => `${stateName3} (runs: ${ensureArray(configuration.run)})`).join(", ")}.`);
         }
       }
       for (const [stateName2, stateValue] of Object.entries(state).filter(([stateName3, stateValue2]) => stateName3 !== "current")) {
@@ -6807,8 +6829,9 @@
         throw new TypeError("observer must be a function.");
       if (!Array.isArray(this.#observers[eventName]))
         this.#observers[eventName] = [];
-      if (options.autorun) {
-        if (eventName == this.name) {
+      const pureEvent = eventName == this.name;
+      if (pureEvent) {
+        if (options.autorun) {
           for (const item of this.#value) {
             observerCallback(item);
           }
@@ -6831,8 +6854,16 @@
       this.#observers[eventName] = this.#observers[eventName].filter((obs) => obs !== observerCallback);
     }
     notify(eventName, eventData, ...extra) {
-      if (Array.isArray(this.#observers[eventName]))
-        this.#observers[eventName].forEach((observerCallback) => observerCallback(eventData, ...extra));
+      if (this.#observers[eventName]) {
+        console.log(`GGG We have ${this.#observers[eventName].length} for ${this.name}.${eventName}`);
+      } else {
+        console.log(`GGG We have NO OBSERVERS for ${this.name}.${eventName}`);
+      }
+      if (Array.isArray(this.#observers[eventName])) {
+        for (const observerCallback of this.#observers[eventName]) {
+          observerCallback(eventData, ...extra);
+        }
+      }
     }
     status() {
       return {
@@ -6849,16 +6880,17 @@
       }
     }
     remove(input) {
-      let id2;
+      let id;
       if (typeof input === "string") {
-        id2 = input;
+        id = input;
       } else {
         if (!input.id)
           throw new Error("Only stingId and onbect with an id property is supported");
-        id2 = input.id;
+        id = input.id;
       }
-      const item = this.#value.find((o) => o.id === id2);
+      const item = this.#value.find((o) => o.id === id);
       this.#value = this.#value.filter((o) => o !== item);
+      console.log(`LLL Notify removeal of ${item?.id}`);
       this.notify("removed", item);
       this.notify("changed", this.#value);
     }
@@ -6871,8 +6903,8 @@
         throw new TypeError("Needs a function.");
       return this.#value.find(callback);
     }
-    get(id2) {
-      return this.#value.find((o) => o.id === id2);
+    get(id) {
+      return this.#value.find((o) => o.id === id);
     }
     map(callback) {
       if (typeof callback !== "function")
@@ -6946,17 +6978,20 @@
     };
     methods = {
       initialize() {
-        this.on("theme.before", (id2) => {
+        this.on("theme.before", (id) => {
         });
-        this.on("theme", (id2, old) => {
-          document.querySelector("html").dataset.uiTheme = id2;
+        this.on("theme", (id, old) => {
+          document.querySelector("html").dataset.uiTheme = id;
         });
         this.on("themes.created", (list) => {
+          console.log("GGG themes created", { list });
         });
-        this.on("themes.removed", (list) => {
+        this.on("themes.removed", (x) => {
+          console.log("GGG themes removed", x);
         });
         this.on("themes.changed", (list) => {
         });
+        this.themes.remove("obsidian");
       }
     };
   };
@@ -7287,8 +7322,16 @@
       },
       // Utils
       addDisposableFromMethods(object, names) {
-        for (const methodName of names.split(" ").map((o) => o.trim()).filter((o) => o)) {
-          this.addDisposable(() => object[methodName]());
+        const methods = names.split(" ").map((o) => o.trim()).filter((o) => o);
+        for (const methodName of methods) {
+          console.log(`HHH INIT addDisposableFromMethods for ${object.id} ${methodName}`);
+          this.addDisposable({
+            description: `addDisposableFromMethods for ${object.id} ${methodName}`,
+            destroy() {
+              console.log(`HHH DESTROY addDisposableFromMethods for ${object.id} ${methodName}`);
+              object[methodName]();
+            }
+          });
         }
       },
       addDisposableFromEvent(element2, eventType, callback, options) {
@@ -7298,7 +7341,7 @@
         emitter.on(eventName, callback);
         this.addDisposable({
           destroy() {
-            emitter.removeListener(eventName, callback);
+            emitter.off(eventName, callback);
           }
         });
       },
@@ -7510,9 +7553,16 @@
           ;
         });
       },
+      clean() {
+        console.log("LLL Component Clean");
+      },
       destroy() {
+        console.log("LLL Component Destroy");
         this.dispose();
         this.removeElements();
+      },
+      exit() {
+        console.log("LLL Component Exit");
       }
     };
   };
@@ -7765,8 +7815,11 @@
         });
         this.addDisposable(connect);
       },
+      clean() {
+        console.log("LLL Socket heard clean");
+      },
       destroy() {
-        this.removeElements();
+        console.log("LLL Socket heard destroy");
       }
     };
   };
@@ -7784,6 +7837,10 @@
       this.source = source;
     }
     manage(child) {
+      console.log("TODO: layout manage child");
+    }
+    forget(child) {
+      console.log("TODO: layout forget child");
     }
     calculateChildW() {
       return 320 * Math.random();
@@ -8009,20 +8066,22 @@
           throw new Error(`It is not possible to create an socket without an socket name.`);
         if (!side === void 0)
           throw new Error(`It is not possible to create an socket without specifying a side, 0 or 1.`);
-        const id2 = [this.id, name].join("/");
-        const socket = new Instance(Anchor, { id: id2, name, side, parent: this.parent, control: this, scene: this.scene });
+        const id = [this.id, name].join("/");
+        const socket = new Instance(Anchor, { id, name, side, parent: this.parent, control: this, scene: this.scene });
         this.sockets.create(socket);
       },
-      removeSocket(id2) {
-        this.sockets.remove(id2);
+      removeSocket(id) {
+        console.log("LLL BEFORE this.sockets.remove", id, this.sockets.map((o) => o.id).join(", "));
+        this.sockets.remove(id);
+        console.log("LLL AFTER this.sockets.remove!", id, this.sockets.map((o) => o.id).join(", "));
       },
       send(name, packet) {
         this.pipe.emit(name, packet);
       },
       pipe(name) {
-        const id2 = [name, this.getRootContainer().id].join(":");
+        const id = [name, this.getRootContainer().id].join(":");
         const origin = globalThis.project.origins.get(this.getRootContainer().node.origin);
-        const pipe = origin.root.pipes.get(id2);
+        const pipe = origin.root.pipes.get(id);
         return pipe;
       }
     };
@@ -8037,16 +8096,20 @@
           parent = this.getApplication();
         }
         this.on("sockets.created", (socket) => {
+          console.log("LLL sockets.created");
           socket.start();
           this.socketLayout.manage(socket);
           parent.getApplication().socketRegistry.create(socket);
         }, { replay: true });
+        console.log('GGG Registering this.on("sockets.removed"....');
         this.on("sockets.removed", (socket) => {
+          console.log("LLL $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  sockets.removed");
           socket.stop();
-          parent.getApplication().socketRegistry.remove(id);
-          this.removeControlAnchor(socket.id);
-          this.socketLayout.forget(socket);
+          parent.getApplication().socketRegistry.remove(socket.id);
         });
+      },
+      clean() {
+        this.sockets.map(({ id }) => this.removeSocket(id));
       }
     };
   };
@@ -8066,19 +8129,24 @@
     methods = {
       initialize() {
         this.on("children.created", (child) => {
+          console.log("LLL children.created");
           child.scene = this.scene;
           child.start();
           this.layout.manage(child);
         }, { replay: true });
         this.on("children.removed", (child) => {
+          console.log("LLL children.removed", child.oo.name);
           child.stop();
           this.layout.forget(child);
         });
       },
-      mount() {
+      clean() {
+        console.log("LLL Destroy Container Children");
+        this.children.map(({ id }) => this.children.remove(id));
       },
       destroy() {
-        this.removeElements();
+      },
+      exit() {
       }
     };
   };
@@ -8124,7 +8192,7 @@
       initialize() {
       },
       mount() {
-      },
+      }
       //
       // createPipe(name, direction){
       //   const id = [name, this.getRootContainer().id].join(':');
@@ -8157,9 +8225,6 @@
       //   origin.root.anchors.remove(id);
       // },
       //
-      destroy() {
-        this.removeElements();
-      }
     };
   };
 
@@ -8263,7 +8328,7 @@
         this.appendElements();
       },
       destroy() {
-        this.removeElements();
+        console.log("LLL LABEL SAYS HI!", this.el.Caption);
       }
     };
   };
@@ -8321,15 +8386,26 @@
       initialize() {
       },
       mount() {
-        const [horizontal, [info1, maximizeButton]] = nest(Horizontal, { parent: this, scene: this.scene, s: 2 }, [
-          [Label, { h: 24, text: this.text, parent: this, r: 3 }, (c, p) => p.children.create(c)],
-          [Label, { h: 24, W: 24, text: "++", parent: this, r: 3 }, (c, p) => p.children.create(c)]
-        ], (c) => this.addDisposableFromMethods(c, "stop destroy"));
+        const [horizontal, [info1, maximizeButton]] = nest(
+          Horizontal,
+          { parent: this, scene: this.scene, s: 2 },
+          [
+            [Label, { h: 24, text: this.text, parent: this, r: 3 }, (c, p) => {
+              p.children.create(c);
+            }],
+            [Label, { h: 24, W: 24, text: "++", parent: this, r: 3 }, (c, p) => {
+              p.children.create(c);
+            }]
+          ],
+          (c) => {
+          }
+        );
         this.handle = info1.el.Container;
-        horizontal.start();
+        this.horizontal = horizontal;
+        this.horizontal.start();
         this.on("selected", (selected) => selected ? info1.el.Container.classList.add("selected") : info1.el.Container.classList.remove("selected"));
         this.on("text", (text3) => info1.text = text3);
-        this.any(["x", "y", "w", "h"], ({ x, y, w, h }) => Object.assign(horizontal, { x, y, w, h }));
+        this.any(["x", "y", "w", "h"], ({ x, y, w, h }) => Object.assign(this.horizontal, { x, y, w, h }));
         let maximized = false;
         const parent = this.getApplication().parent ? this.getApplication().parent.getApplication() : this.getRootContainer();
         const current = this.getApplication();
@@ -8369,6 +8445,13 @@
           }
         }, "windowToggle");
         this.addDisposableFromEvent(maximizeButton.handle, "click", windowToggle);
+      },
+      clean() {
+        console.log("LLL Caption got clean");
+        this.horizontal.stop();
+      },
+      destroy() {
+        console.log("LLL Caption got destroy");
       }
     };
   };
@@ -8516,8 +8599,7 @@
       isResizable: true,
       showMenu: false,
       showStatus: false,
-      socketRegistry: [],
-      sockets: []
+      selected: false
     };
     properties = {
       contain: true
@@ -8574,16 +8656,16 @@
         if (this.isRootWindow)
           return;
         if (this.showCaption) {
-          let caption = new Instance(Caption, { h: 24, text: this.caption });
-          this.on("caption", (v) => caption.text = v);
-          this.createWindowComponent(caption);
+          this.captionComponent = new Instance(Caption, { h: 24, text: this.caption });
+          this.on("caption", (v) => this.captionComponent.text = v);
+          this.createWindowComponent(this.captionComponent);
           this.on("node", (node) => {
             if (node.caption)
-              node.on("caption", (caption2) => this.caption = caption2);
+              node.on("caption", (caption) => this.caption = caption);
           });
           const move = new Move_default({
             area: window,
-            handle: caption.handle,
+            handle: this.captionComponent.handle,
             scale: () => this.getScale(this),
             before: () => {
             },
@@ -8595,6 +8677,12 @@
             }
           });
           this.addDisposable(move);
+          const select = new Select({
+            component: this,
+            handle: this.captionComponent.handle
+          });
+          this.addDisposable(select);
+          this.on("selected", (v) => this.captionComponent.selected = v);
         }
         const focus = new Focus({
           handle: this.scene,
@@ -8603,9 +8691,14 @@
           element: () => this.scene
         });
         this.addDisposable(focus);
+      },
+      clean() {
+        console.log("LLL * Window Clean");
+      },
+      destroy() {
+        console.log("LLL * Window Destroy");
       }
     };
-    constraints = {};
   };
 
   // plug-ins/windows/Application.js
@@ -8650,17 +8743,20 @@
             }
           });
         }
-        let id2 = observableName;
-        if (this.oo.scratch.couplers[id2])
-          this.oo.scratch.couplers[id2]();
+        let id = observableName;
+        if (this.oo.scratch.couplers[id])
+          this.oo.scratch.couplers[id]();
         const disposable = fromObject.on(observableName, (v) => toObject[writableName].set(transform ? transform(v) : v), { autorun: true }, { manualDispose: true });
-        this.oo.scratch.couplers[id2] = disposable;
+        this.oo.scratch.couplers[id] = disposable;
       }
     };
     methods = {
       initialize() {
         this.controller = new EventEmitter();
         this.getRoot().applications.create(this);
+      },
+      destroy() {
+        console.log("LLL Application Destroy");
       }
     };
   };
@@ -8761,7 +8857,6 @@
       this.area.addEventListener("mousemove", this.movelHandler);
     }
     destroy() {
-      this.removeStartedObserver();
       this.area.removeEventListener(this.event, this.wheelHandler);
       this.handle.removeEventListener(this.event, this.wheelHandler);
       this.area.removeEventListener("mousemove", this.movelHandler);
@@ -10814,6 +10909,49 @@
       pipes: [],
       components: { ...components_default }
     };
+    traits = {
+      async loadXml(url) {
+        if (!url)
+          return;
+        const xml = await (await fetch(url)).text();
+        const $ = cheerio.load(xml, { xmlMode: true, decodeEntities: true, withStartIndices: true, withEndIndices: true });
+        for (const el of $("Workspace").children()) {
+          const node = new Instance(Node, { origin: this.getApplication().id });
+          const data = {};
+          node.assign({ type: el.name, ...el.attribs }, data, [$, $(el).children()]);
+          this.elements.create(node);
+        }
+      },
+      loadElements([$, children2]) {
+        if (!children2)
+          return;
+        for (const el of children2) {
+          const node = new Instance(Node, { origin: this.getApplication().id });
+          const data = {};
+          node.assign({ type: el.name, ...el.attribs }, data, [$, $(el).children()]);
+          this.elements.create(node);
+        }
+      },
+      getXml() {
+        const serializables = "id x y w h".split(" ");
+        const $ = cheerio.load(``, { xmlMode: true, decodeEntities: true, withStartIndices: true, withEndIndices: true });
+        for (const application of this.applications) {
+          let body = "";
+          if (application.pane) {
+            body = application.pane.getXml();
+          }
+          const attributes = (application.serializables || serializables).filter((key) => application[key]).map((key) => `${key}="${application[key]}"`).join(" ");
+          $.root().append(`<${application.oo.name} ${attributes}>${body}</${application.oo.name}>`);
+        }
+        const xml = $.root().html();
+        return xml;
+      },
+      createNode(meta, data, content) {
+        const node = new Instance(Node, { origin: this.getApplication().id });
+        node.assign(meta, data, content);
+        this.elements.create(node);
+      }
+    };
     methods = {
       initialize() {
         this.name = "pane";
@@ -10831,8 +10969,11 @@
         this.flexible = true;
       },
       mount() {
-        this.addDisposableFromSmartEmitter(this.getRoot().keyboard, "Delete", (e) => {
-          console.log("Cute Emitter", e);
+        this.addDisposableFromSmartEmitter(this.getRoot().keyboard, "Remove", (e) => {
+          console.log("Cute Emitter Heard Remove", this.applications.filter((o) => o.selected));
+          for (const { id } of this.applications.filter((o) => o.selected)) {
+            this.elements.remove(id);
+          }
         });
         const paneBody = new Instance(Viewport, { parent: this, classes: this.classes, flexible: true });
         this.viewport = paneBody;
@@ -10867,10 +11008,11 @@
           this.applications.create(ui);
           ui.start();
         }, { replay: true });
-        this.on("elements.removed", ({ id: id2 }) => {
-          this.applications.get(id2).stop();
-          this.applications.get(id2).destroy();
-          this.applications.remove(id2);
+        this.on("elements.removed", ({ id }) => {
+          console.log("GGGG elements.removed", id);
+          this.applications.get(id).stop();
+          this.applications.get(id).destroy();
+          this.applications.remove(id);
         });
         this.appendElements();
         const menu = new Menu({
@@ -10943,48 +11085,113 @@
             /* this passes on the cheerio tuple */
           );
       },
-      async loadXml(url) {
-        if (!url)
-          return;
-        const xml = await (await fetch(url)).text();
-        const $ = cheerio.load(xml, { xmlMode: true, decodeEntities: true, withStartIndices: true, withEndIndices: true });
-        for (const el of $("Workspace").children()) {
-          const node = new Instance(Node, { origin: this.getApplication().id });
-          const data = {};
-          node.assign({ type: el.name, ...el.attribs }, data, [$, $(el).children()]);
-          this.elements.create(node);
-        }
+      clean() {
+        console.log("TODO pane.clean actually stop all the applications elements anchors pipes");
+        this.elements.map(({ id }) => this.elements.remove(id));
+        this.anchors.map(({ id }) => this.anchors.remove(id));
+        this.pipes.map(({ id }) => this.pipes.remove(id));
       },
-      loadElements([$, children2]) {
-        if (!children2)
-          return;
-        for (const el of children2) {
-          const node = new Instance(Node, { origin: this.getApplication().id });
-          const data = {};
-          node.assign({ type: el.name, ...el.attribs }, data, [$, $(el).children()]);
-          this.elements.create(node);
-        }
-      },
-      getXml() {
-        const serializables = "id x y w h".split(" ");
-        const $ = cheerio.load(``, { xmlMode: true, decodeEntities: true, withStartIndices: true, withEndIndices: true });
-        for (const application of this.applications) {
-          let body = "";
-          if (application.pane) {
-            body = application.pane.getXml();
-          }
-          const attributes = (application.serializables || serializables).filter((key) => application[key]).map((key) => `${key}="${application[key]}"`).join(" ");
-          $.root().append(`<${application.oo.name} ${attributes}>${body}</${application.oo.name}>`);
-        }
-        const xml = $.root().html();
-        return xml;
-      },
-      createNode(meta, data, content) {
-        const node = new Instance(Node, { origin: this.getApplication().id });
-        node.assign(meta, data, content);
-        this.elements.create(node);
+      destroy() {
+        console.log("LLL pane.destroy");
       }
     };
+  };
+
+  // plug-ins/components/Group.js
+  var Group = class {
+    static {
+      __name(this, "Group");
+    }
+    static extends = [Application];
+    properties = {
+      serializables: "id x y w h showMenu showStatus zoom library".split(" ")
+    };
+    traits = {};
+    methods = {
+      initialize() {
+        this.createSocket("in", 0);
+        this.createSocket("out", 1);
+      },
+      mount() {
+        this.pane = new Instance(Pane, { library: this.library });
+        this.on("node", (node) => {
+          node.on("url", (url) => this.pane.url = url);
+          node.on("zoom", (zoom) => this.pane.zoom = zoom);
+          this.pane.on("zoom", (zoom) => this.zoom = zoom);
+        });
+        this.createWindowComponent(this.pane);
+      },
+      clean() {
+        console.log("LLL group clean", this.children);
+      },
+      destroy() {
+        console.log("LLL group destroy");
+      }
+    };
+  };
+
+  // plug-ins/cute-emitter/CuteEmitter.js
+  var CuteEmitter = class {
+    static {
+      __name(this, "CuteEmitter");
+    }
+    constructor() {
+      this.events = /* @__PURE__ */ new Map();
+    }
+    on(event, listener) {
+      if (!this.events.has(event)) {
+        this.events.set(event, []);
+      }
+      this.events.get(event).push(listener);
+      return {
+        destroy: () => this.off(event, listener)
+      };
+    }
+    emit(event, ...args) {
+      this.events.get(event)?.forEach((listener) => listener(...args));
+    }
+    off(event, listener) {
+      if (this.events.has(event)) {
+        const listeners = this.events.get(event).filter((l) => l !== listener);
+        this.events.set(event, listeners);
+      }
+    }
+  };
+
+  // plug-ins/keyboard-monitor/keyboard.json
+  var keyboard_default = {
+    Backspace: "Remove",
+    Delete: "Remove",
+    Bork: "Bork"
+  };
+
+  // plug-ins/keyboard-monitor/KeyboardMonitor.js
+  var KeyboardMonitor = class extends CuteEmitter {
+    static {
+      __name(this, "KeyboardMonitor");
+    }
+    source;
+    constructor(configuration) {
+      super();
+      const defaults = {
+        source: globalThis.window
+      };
+      const options = Object.assign({}, defaults, configuration);
+      this.source = options.source;
+      this.mount();
+    }
+    mount() {
+      const self = this;
+      this.keyDownListener = function(e) {
+        console.log(keyboard_default[e.key]);
+        self.emit(keyboard_default[e.key], e);
+      };
+      console.log("BBB MONITOR UP");
+      this.source.addEventListener("keydown", this.keyDownListener);
+    }
+    destroy() {
+      this.handle.removeEventListener("keydown", this.keyDownListener);
+    }
   };
 
   // plug-ins/windows/ui/Menu.svelte
@@ -11245,12 +11452,8 @@
           }
         });
       },
-      stop() {
-        console.log("todo: stopping root application");
-      },
       destroy() {
         console.log("todo: destroying root application");
-        this.dispose();
       }
     };
   };
@@ -11318,19 +11521,17 @@
     };
   };
 
-  // plug-ins/components/Window.js
-  var Window2 = class {
+  // plug-ins/components/Workspace.js
+  var uuid4 = bundle["uuid"];
+  var cheerio2 = bundle["cheerio"];
+  var Workspace = class {
     static {
-      __name(this, "Window");
+      __name(this, "Workspace");
     }
-    static extends = [Application];
-    properties = {
-      serializables: "id x y w h showMenu showStatus zoom library".split(" ")
-    };
+    static extends = [Group];
     traits = {
       // TODO: menu should be destroyed/recreated each time
       closeMenu() {
-        console.log("Close Menu");
         this.overlay.show = false;
         this.menu.show = false;
         this.container.style.display = "none";
@@ -11357,102 +11558,6 @@
     };
     methods = {
       initialize() {
-        this.createSocket("in", 0);
-        this.createSocket("out", 1);
-      },
-      mount() {
-        this.pane = new Instance(Pane, { library: this.library });
-        this.on("node", (node) => {
-          node.on("url", (url) => this.pane.url = url);
-          node.on("zoom", (zoom) => this.pane.zoom = zoom);
-          this.pane.on("zoom", (zoom) => this.zoom = zoom);
-        });
-        this.createWindowComponent(this.pane);
-      },
-      stop() {
-        console.log("todo: stopping root application");
-      },
-      destroy() {
-        console.log("todo: destroying root application");
-        this.dispose();
-      }
-    };
-  };
-
-  // plug-ins/cute-emitter/CuteEmitter.js
-  var CuteEmitter = class {
-    static {
-      __name(this, "CuteEmitter");
-    }
-    constructor() {
-      this.events = /* @__PURE__ */ new Map();
-    }
-    on(event, listener) {
-      if (!this.events.has(event)) {
-        this.events.set(event, []);
-      }
-      this.events.get(event).push(listener);
-      return {
-        destroy: () => this.off(event, listener)
-      };
-    }
-    emit(event, ...args) {
-      this.events.get(event)?.forEach((listener) => listener(...args));
-    }
-    off(event, listener) {
-      if (this.events.has(event)) {
-        const listeners = this.events.get(event).filter((l) => l !== listener);
-        this.events.set(event, listeners);
-      }
-    }
-  };
-
-  // plug-ins/keyboard-monitor/keyboard.json
-  var keyboard_default = {
-    Backspace: "Remove",
-    Delete: "Remove",
-    Bork: "Bork"
-  };
-
-  // plug-ins/keyboard-monitor/KeyboardMonitor.js
-  var KeyboardMonitor = class extends CuteEmitter {
-    static {
-      __name(this, "KeyboardMonitor");
-    }
-    source;
-    constructor(configuration) {
-      super();
-      const defaults = {
-        source: globalThis.window
-      };
-      const options = Object.assign({}, defaults, configuration);
-      this.source = options.source;
-      this.mount();
-    }
-    mount() {
-      const self = this;
-      this.keyDownListener = function(e) {
-        console.log(keyboard_default[e.key]);
-        self.emit(keyboard_default[e.key]);
-      };
-      console.log("BBB MONITOR UP");
-      this.source.addEventListener("keydown", this.keyDownListener);
-    }
-    destroy() {
-      this.handle.removeEventListener("keydown", this.keyDownListener);
-    }
-  };
-
-  // plug-ins/components/Workspace.js
-  var uuid4 = bundle["uuid"];
-  var cheerio2 = bundle["cheerio"];
-  var Workspace = class {
-    static {
-      __name(this, "Workspace");
-    }
-    static extends = [Window2];
-    methods = {
-      initialize() {
         console.log("Workspace Initialize!");
         this.keyboard = new KeyboardMonitor();
         this.addDisposable(this.keyboard);
@@ -11465,27 +11570,6 @@
         const xml = $.root().html();
         console.log(xml);
         return xml;
-      }
-    };
-  };
-
-  // plug-ins/components/Port.js
-  var Port = class {
-    static {
-      __name(this, "Port");
-    }
-    static extends = [Application];
-    properties = {};
-    methods = {
-      mount() {
-        console.log("I am the mighty port child of", this.parent.oo.name, "I exist in two places in a window and outside it");
-      },
-      stop() {
-        console.log("todo: stopping root application");
-      },
-      destroy() {
-        console.log("todo: destroying root application");
-        this.dispose();
       }
     };
   };
@@ -11854,18 +11938,14 @@
       mount() {
         this.foreign = new Instance(Foreign);
         this.createWindowComponent(this.foreign);
-        new hello_default({
-          target: this.foreign.body
+        this.component = new hello_default({
+          target: this.foreign.body,
+          props: {}
         });
-        this.on("h", (h) => {
-        });
-      },
-      stop() {
-        console.log("todo: stopping root application");
+        this.addDisposable(stopWheel(this.foreign.body));
       },
       destroy() {
-        console.log("todo: destroying root application");
-        this.dispose();
+        this.component.$destroy();
       }
     };
   };
@@ -11984,6 +12064,9 @@
         }
         __name(runCommand, "runCommand");
         runFakeTerm();
+      },
+      destroy() {
+        console.log(`TODO!!!!!!!!!!!! Terminal Got Destroyed`);
       }
     };
   };
@@ -12159,9 +12242,6 @@
           update(this.el.Primary, { x1: x3, y1: y3, x2: x4, y2: y4 });
         });
         this.appendElements();
-      },
-      destroy() {
-        this.removeElements();
       }
     };
   };
@@ -12174,6 +12254,9 @@
     static extends = [Window];
     properties = {
       serializables: "id from to out in".split(" ")
+    };
+    observables = {
+      selected: false
     };
     methods = {
       initialize() {
@@ -12189,18 +12272,17 @@
           out: this.node.out,
           in: this.node.in
         });
+        this.connector.on("selected", (v) => this.selected = v);
         this.node.on("from", (v) => this.pipe.from = v);
         this.node.on("to", (v) => this.pipe.to = v);
         this.node.on("out", (v) => this.pipe.out = v);
         this.node.on("in", (v) => this.pipe.in = v);
         this.connector.start();
       },
-      stop() {
-        console.log("todo: stopping root application");
+      clean() {
+        this.connector.stop();
       },
       destroy() {
-        console.log("todo: destroying root application");
-        this.dispose();
       }
     };
   };
@@ -12999,8 +13081,8 @@
   // plug-ins/components/architecture/stores.js
   function getApplicationTree(component) {
     const { subscribe: subscribe2, update: update3 } = writable({ children: [] });
-    function addDirectory({ id: id2, name, type, parent }, depth = 0) {
-      const directory = { id: id2, name, type, children: [], object: parent, open: depth > 3 ? false : true };
+    function addDirectory({ id, name, type, parent }, depth = 0) {
+      const directory = { id, name, type, children: [], object: parent, open: depth > 3 ? false : true };
       depth++;
       if (parent?.children) {
         for (const child of parent.children) {
@@ -13058,6 +13140,7 @@
         this.addDisposable(stopWheel(this.foreign.body));
       },
       destroy() {
+        console.log("LLL Architecture Destroy");
         this.component.$destroy();
       }
     };
@@ -14812,8 +14895,7 @@
   // plug-ins/components/index.js
   var components2 = {
     Workspace,
-    Port,
-    Window: Window2,
+    Group,
     Pipe: Pipe2,
     Hello: Hello2,
     Architecture,

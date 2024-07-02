@@ -1,8 +1,9 @@
 import {Instance} from "/plug-ins/object-oriented-programming/index.js";
 import Application from "/plug-ins/windows/Application.js";
 import Foreign from "/plug-ins/windows/Foreign.js";
+import stopWheel from '/plug-ins/stop-wheel/index.js';
 
-import Test from "/plug-ins/components/hello/index.svelte";
+import Interface from "/plug-ins/components/hello/index.svelte";
 
 
 export default class Hello {
@@ -20,25 +21,17 @@ export default class Hello {
       this.foreign = new Instance(Foreign);
       this.createWindowComponent( this.foreign );
 
-      new Test({
+      this.component = new Interface({
           target: this.foreign.body,
+          props: {
+          }
       });
 
-
-      this.on('h', (h)=>{
-        // console.log({h});
-      });
-
-
-    },
-
-    stop(){
-      console.log('todo: stopping root application');
+    this.addDisposable( stopWheel(this.foreign.body) );
     },
 
     destroy(){
-      console.log('todo: destroying root application');
-      this.dispose()
+      this.component.$destroy();
     },
 
   };

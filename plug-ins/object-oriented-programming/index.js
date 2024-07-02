@@ -9,6 +9,8 @@ export class Inheritance {
     this.instance = instance;
     this.instance.oo.extends.push(Class)
     this.collectClasses(Class.extends);
+
+    console.log('PPP all', this.instance.oo.extends);
     //??? this.instance.oo.specifications.push(specification);
     this.instantiateSuperclasses()
     // console.log(this.instance);
@@ -16,8 +18,13 @@ export class Inheritance {
 
   collectClasses(list){
     if (!Array.isArray(list)) return;
-    for (const Class of list) {
+
+    for (const Class of list.filter(o=>o)) {
+      console.log(Class);
       this.instance.oo.extends.push(Class);
+    }
+    for (const Class of list.filter(o=>o)) {
+      console.log(Class);
       this.collectClasses(Class.extends);
     }
   }
@@ -93,8 +100,8 @@ export class Instance {
          },
 
          stop: {
-           run: 'destroy',
-           can: 'start'
+           run: 'clean destroy exit',
+           can: 'initial'
          },
 
       };
@@ -104,7 +111,7 @@ export class Instance {
 
     const ensureArray = function(input){ // convert string to array, and if it is array leave it alone
       if( Array.isArray(input) ) return input;
-      return [input];
+      return input.split(' ');
     }
     const isStateTransitionAllowed = function({from, to, state}){
       return ensureArray(state[from].can).includes(to);
@@ -275,8 +282,20 @@ export class Instance {
 
     // FLUSH ALL
     this.dispose = ()=>{
-      disposables.map(f=>f()); // for here
-      this.oo.disposables.map(f=>f()); // for user
+      for (const disposable of disposables) {
+        if(typeof disposable === "function"){
+          disposable();
+        }else{
+          console.error('Bad Disposable', disposable)
+        }
+      }
+      for (const disposable of this.oo.disposables) {
+        if(typeof disposable === "function"){
+          disposable();
+        }else{
+          console.error('Bad Disposable', disposable)
+        }
+      }
     }
 
 
@@ -296,49 +315,6 @@ export class Instance {
       console.log(response);
       return response
     }
-
-
-
-
-
-
-
-
-
-
-
-
-    // REFLECTION
-
-
-
-
-    // Enable Observing
-
-    // let glues = {};
-    // this.glue = function(name, update, staleId){
-    //   console.log('EEE GLUE', staleId, glues);
-    //   if(glues[staleId]){
-    //     console.log(`EEE trashing staleId ${staleId}`, glues);
-    //     glues[staleId](); // clean if stale is present
-    //     delete glues[staleId];
-    //   }else{
-    //     console.log(`EEE staleId ${staleId} not found`, glues);
-    //   }
-    //   let newId = uuid();
-    //   let dispose = this.on(name, v=>update(v),{},{manualDispose:true});
-    //   update(this[name]); // kick-off
-    //   glues[newId] = dispose;
-    //   console.log(`EEE GOT ${Object.values(glues).length} glue(s)`, glues);
-    //   return newId;
-    // }
-    // disposable(Object.values(glues).map(x=>x())); // clean glue on shutdown
-
-    // this.signal = function(name){
-    //   const signal = new Signal();
-    //   signal.dispose = this.on(name, v=>signal.set(v),{},{manualDispose:true});
-    //   return signal;
-    // }
 
     this.on = function(eventPath, observerCallback, options, control){
       const [name, path] = eventPath.split('.', 2);
@@ -366,11 +342,11 @@ export class Instance {
     }
 
     this.any = function(observables, ...functions){
-      disposable(this.anyManual(observables, ...functions));
+      disposable(...this.anyManual(observables, ...functions));
     }
 
     this.all = function(observables, ...functions){
-      disposable(this.allManual(observables, ...functions));
+      disposable(...this.allManual(observables, ...functions));
     }
 
 
@@ -414,8 +390,11 @@ export class Instance {
     }
 
     const state = specification.state || defaultState;
-    for (const [stateName, stateValue] of Object.entries(state).filter(([stateName, stateValue])=>stateName!=='current')) {
+    const stateNames = Object.entries(state).filter(([stateName, stateValue])=>stateName!=='current');
+    for (const [stateName, stateValue] of stateNames) {
+
       if(stateName in this === false){
+
         const stateFunction = function(){
           // check if in this state this function can run
           const currentState = state.current;
@@ -426,23 +405,30 @@ export class Instance {
           const transitionAllowed = isStateTransitionAllowed({
             from, to, state
           })
+
           if(!transitionAllowed){
               throw new Error(`Cannot transition state from ${from} (current) to ${to}, only ${ensureArray(state[currentState].can).join(", ")} allowed.`)
           }
+
           if(transitionAllowed){
               // console.log(`Transitioniong ${specification.constructor.name} state from ${from} -> ${to} `);
           }
+
           // execute methods specified in run
           const stateFunctions = ensureArray(state[stateName].run);
+          // console.log('LLL stateFunctions', stateFunctions);
           for (const functionName of stateFunctions) {
             // const lookup = specification;
             // if(!lookup || !lookup[functionName]) throw new Error(`State Change: Class ${specification.constructor.name} has no function named ${functionName}`)
             // stateConstraint(stateConstraints, functionName);
             // lookup[functionName].bind(this)();
             //
-            if(functionName in this === false) throw new Error(`Initialize: Class ${specification.constructor.name} has no function named ${functionName}`)
-            stateConstraint(stateConstraints, functionName);
-            this[functionName]();
+            if(functionName in this === false){
+              console.info(`Initialize: Class ${specification.constructor.name} has no function named ${functionName}`)
+            }else{
+              stateConstraint(stateConstraints, functionName);
+              this[functionName]();
+            }
 
           }
           // switch state
@@ -455,6 +441,8 @@ export class Instance {
           enumerable: true,
           configurable: false,
         });
+      }else{
+        throw new Error(`Lol, state name "${stateName}" is used for something else in Class ${this.oo.name}. That is absolutley not allowed, as switching between states would have been destroyed. Other reserved names are: ${stateNames.map(([stateName, configuration])=>`${stateName} (runs: ${ensureArray(configuration.run)})`).join(', ')}.`);
       }
     } // for properties
 
@@ -641,8 +629,9 @@ export class List {
     if (!Array.isArray(this.#observers[eventName])) this.#observers[eventName] = []; // If there isn't an observers array for this key yet, create it
 
     // AUTORUN LOGIC
-    if(options.autorun){
-      if( eventName == this.name ){ // will not spew for xxx.created or xxx.deleted just xxx
+    const pureEvent = eventName == this.name;
+    if( pureEvent ){ // will not spew for xxx.created or xxx.deleted just xxx
+      if(options.autorun){
         for (const item of this.#value) { observerCallback(item) }
       }
     }
@@ -669,13 +658,24 @@ export class List {
   }
 
   notify(eventName, eventData, ...extra) {
-    if (Array.isArray(this.#observers[eventName])) this.#observers[eventName].forEach((observerCallback) => observerCallback(eventData, ...extra));
+
+    if(this.#observers[eventName]){
+      console.log(`GGG We have ${this.#observers[eventName].length} for ${this.name}.${eventName}`)
+    }else{
+      console.log(`GGG We have NO OBSERVERS for ${this.name}.${eventName}`)
+
+    }
+
+    if (Array.isArray(this.#observers[eventName])){
+      for (const observerCallback of this.#observers[eventName]) {
+        observerCallback(eventData, ...extra)
+      }
+    }
   }
 
   status(){
     return {
       observerCount: Object.values(this.#observers).flat().length,
-
     };
   }
 
@@ -697,16 +697,15 @@ export class List {
 
   remove(input){
     let id;
-
     if(typeof input === 'string'){
       id = input;
     }else{
       if(!input.id) throw new Error('Only stingId and onbect with an id property is supported');
       id = input.id;
     }
-
     const item = this.#value.find(o => o.id === id);
     this.#value = this.#value.filter(o => o !== item);
+    console.log(`LLL Notify removeal of ${item?.id}`);
     this.notify("removed", item);
     this.notify("changed", this.#value);
   }
@@ -758,30 +757,3 @@ export class List {
 
 
 }
-
-
-
-//
-// class Signal {
-//
-//   subscribers = [];
-//
-//   value = undefined;
-//   dispose = undefined;
-//   subscriptionFunction = null;
-//
-//   set(value){
-//     this.value = value;
-//   }
-//
-//   subscribe(subscriptionFunction){
-//     this.subscriptionFunction = subscriptionFunction;
-//     this.subscriptionFunction(this.value);
-//     return this.unsubscribe.bind(this);
-//   }
-//
-//   unsubscribe(){
-//     this.dispose();
-//   }
-//
-// }

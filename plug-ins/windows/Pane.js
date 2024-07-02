@@ -65,6 +65,54 @@ export default class Pane {
 
   };
 
+  traits = {
+
+    async loadXml(url){
+      if(!url) return;
+      const xml = await (await fetch(url)).text();
+      const $ = cheerio.load(xml, { xmlMode: true, decodeEntities: true, withStartIndices: true, withEndIndices: true });
+      for (const el of $('Workspace').children()) {
+        const node = new Instance(Node, { origin: this.getApplication().id });
+        const data = {}; //? NOTE: this can use await...
+        node.assign({type:el.name, ...el.attribs, }, data, [$, $(el).children()]);
+        this.elements.create( node ); // -> see project #onStart for creation.
+      }
+    },
+
+    loadElements([$, children]){
+      if(!children) return;
+      for (const el of children) {
+        const node = new Instance(Node, { origin: this.getApplication().id });
+        const data = {}; //? NOTE: this can use await...
+        node.assign({type:el.name, ...el.attribs}, data, [$, $(el).children()]);
+        this.elements.create( node ); // -> see project #onStart for creation.
+      }
+    },
+
+    getXml(){
+      const serializables =  'id x y w h'.split(' ');
+      const $ = cheerio.load(``, { xmlMode: true, decodeEntities: true, withStartIndices: true, withEndIndices: true });
+        for (const application of this.applications) {
+          let body = "";
+          if(application.pane){
+            body = application.pane.getXml();
+          }
+          const attributes = (application.serializables||serializables).filter(key=>application[key]).map(key=>`${key}="${application[key]}"`).join(' ')
+          $.root().append(`<${application.oo.name} ${attributes}>${body}</${application.oo.name}>`);
+        }
+      const xml = $.root().html();
+      return xml;
+    },
+
+    createNode(meta, data, content){
+      const node = new Instance(Node, { origin: this.getApplication().id });
+      node.assign(meta, data, content);
+      this.elements.create( node ); // -> see project #onStart for creation.
+    },
+
+
+  };
+
   methods = {
 
     initialize(){
@@ -90,8 +138,13 @@ export default class Pane {
     mount(){
       // this.parent.elements = this.elements;
 
-      this.addDisposableFromSmartEmitter(this.getRoot().keyboard, 'Delete', (e)=>{
-        console.log('Cute Emitter', e);
+      this.addDisposableFromSmartEmitter(this.getRoot().keyboard, 'Remove', (e)=>{
+
+        console.log('Cute Emitter Heard Remove', this.applications.filter(o=>o.selected));
+
+        for (const {id} of this.applications.filter(o=>o.selected)) {
+          this.elements.remove(id);
+        }
 
       });
 
@@ -139,6 +192,7 @@ export default class Pane {
       }, {replay:true});
 
       this.on("elements.removed", ({id}) => {
+        console.log("GGGG elements.removed", id);
         this.applications.get(id).stop();
         this.applications.get(id).destroy();
         this.applications.remove(id);
@@ -226,49 +280,20 @@ export default class Pane {
 
     },
 
-    async loadXml(url){
-      if(!url) return;
-      const xml = await (await fetch(url)).text();
-      const $ = cheerio.load(xml, { xmlMode: true, decodeEntities: true, withStartIndices: true, withEndIndices: true });
-      for (const el of $('Workspace').children()) {
-        const node = new Instance(Node, { origin: this.getApplication().id });
-        const data = {}; //? NOTE: this can use await...
-        node.assign({type:el.name, ...el.attribs, }, data, [$, $(el).children()]);
-        this.elements.create( node ); // -> see project #onStart for creation.
-      }
+    clean(){
+      console.log('TODO pane.clean actually stop all the applications elements anchors pipes');
+
+      this.elements.map( ({id})=>this.elements.remove(id) );
+      // done by elements this.applications.map( ({id})=>this.applications.remove(id) );
+      this.anchors.map( ({id})=>this.anchors.remove(id) );
+      this.pipes.map( ({id})=>this.pipes.remove(id) );
+
+
     },
 
-    loadElements([$, children]){
-      if(!children) return;
-      for (const el of children) {
-        const node = new Instance(Node, { origin: this.getApplication().id });
-        const data = {}; //? NOTE: this can use await...
-        node.assign({type:el.name, ...el.attribs}, data, [$, $(el).children()]);
-        this.elements.create( node ); // -> see project #onStart for creation.
-      }
-    },
-
-    getXml(){
-      const serializables =  'id x y w h'.split(' ');
-      const $ = cheerio.load(``, { xmlMode: true, decodeEntities: true, withStartIndices: true, withEndIndices: true });
-        for (const application of this.applications) {
-          let body = "";
-          if(application.pane){
-            body = application.pane.getXml();
-          }
-          const attributes = (application.serializables||serializables).filter(key=>application[key]).map(key=>`${key}="${application[key]}"`).join(' ')
-          $.root().append(`<${application.oo.name} ${attributes}>${body}</${application.oo.name}>`);
-        }
-      const xml = $.root().html();
-      return xml;
-    },
-
-    createNode(meta, data, content){
-      const node = new Instance(Node, { origin: this.getApplication().id });
-      node.assign(meta, data, content);
-      this.elements.create( node ); // -> see project #onStart for creation.
-    },
-
+    destroy(){
+      console.log('LLL pane.destroy');
+    }
 
   }
 

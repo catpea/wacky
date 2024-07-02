@@ -139,9 +139,7 @@ export default class Connector {
       this.appendElements();
     },
 
-    destroy(){
-      this.removeElements()
-    }
+
 
   }
 

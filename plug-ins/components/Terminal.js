@@ -154,5 +154,9 @@ export default class Terminal {
       runFakeTerm();
     },
 
+    destroy(){
+      console.log(`TODO!!!!!!!!!!!! Terminal Got Destroyed`);
+    }
+
   };
 }

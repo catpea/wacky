@@ -4,7 +4,7 @@ import { svg, update } from "/plug-ins/domek/index.js"
 
 export default class Component {
 
-  static extends = [Disposable];
+  static extends = [Disposable ];
 
   properties = {
     id: uuid(),
@@ -203,10 +203,20 @@ export default class Component {
       });
     },
 
+    clean(){
+      console.log('LLL Component Clean');
+    },
+
     destroy(){
+      console.log('LLL Component Destroy');
       this.dispose();
       this.removeElements();
     },
+
+    exit(){
+      console.log('LLL Component Exit');
+    },
+
 
   }
 

@@ -107,7 +107,8 @@ export default class Label {
     },
 
     destroy(){
-      this.removeElements()
+      // this.removeElements()
+      console.log('LLL LABEL SAYS HI!', this.el.Caption);
     }
 
   }

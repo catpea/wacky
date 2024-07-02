@@ -108,9 +108,7 @@ export default class Frame {
 
     },
 
-    destroy(){
-      this.removeElements()
-    }
+
 
   }
 

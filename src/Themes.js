@@ -48,17 +48,19 @@ export default class Themes {
       });
 
       this.on("themes.created", (list) => {
-        // console.log("themes created", { list });
+        console.log("GGG themes created", { list });
       });
 
-      this.on("themes.removed", (list) => {
-        // console.log("themes removed", { list });
+      this.on("themes.removed", (x) => {
+        console.log("GGG themes removed", x);
       });
 
       // way to listen to an array
       this.on("themes.changed", (list) => {
         // console.log("themes changed", { list });
       });
+
+      this.themes.remove('obsidian')
 
     }
   }

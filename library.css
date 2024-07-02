@@ -11591,7 +11591,7 @@ svg.editor-interface {
   stroke: var(--editor-border);
   fill: var(--editor-background-secondary);
 }
-.viewport-background.window {
+.viewport-background.group {
   stroke: var(--editor-border);
   fill: var(--editor-background-secondary);
 }

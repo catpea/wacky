@@ -83,13 +83,10 @@ export default class Menu {
     },
 
 
-    stop(){
-      console.log('todo: stopping root application');
-    },
+ 
 
     destroy(){
       console.log('todo: destroying root application');
-      this.dispose()
     },
 
   };

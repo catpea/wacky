@@ -89,9 +89,14 @@ export default class Anchor {
 
     },
 
+    clean(){
+      console.log('LLL Socket heard clean');
+    },
+
     destroy(){
-      this.removeElements()
+      console.log('LLL Socket heard destroy');
     }
+
 
   }
 

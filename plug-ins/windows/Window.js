@@ -1,11 +1,9 @@
 import { svg, update } from "/plug-ins/domek/index.js"
 
+import Sockets from "/plug-ins/windows/api/Sockets.js";
 
 import {Instance} from "/plug-ins/object-oriented-programming/index.js";
 
-import Socket from "/plug-ins/windows/Socket.js";
-import WithSockets from "/plug-ins/windows/api/Sockets.js";
-import { SocketLayout } from "/plug-ins/layout-manager/index.js";
 
 
 import Vertical from "/plug-ins/windows/Vertical.js";
@@ -15,11 +13,12 @@ import Caption from "/plug-ins/windows/Caption.js";
 import Move from "/plug-ins/meowse/Move.js";
 import Focus from "/plug-ins/meowse/Focus.js";
 import Resize from "/plug-ins/meowse/Resize.js";
+import Select from "/plug-ins/select/index.js";
 
 
 export default class Window {
 
-  static extends = [WithSockets, Vertical];
+  static extends = [Sockets, Vertical];
 
   observables = {
     caption: 'Untitled',
@@ -29,8 +28,7 @@ export default class Window {
     showMenu: false,
     showStatus: false,
 
-    socketRegistry: [],
-    sockets: [],
+    selected: false,
   };
 
   properties = {
@@ -103,17 +101,18 @@ export default class Window {
       if(this.isRootWindow) return;
 
 
-
       if(this.showCaption){
-        let caption = new Instance(Caption, {h: 24, text: this.caption});
-        this.on('caption', v=>caption.text=v)
-        this.createWindowComponent(caption);
+
+        this.captionComponent = new Instance(Caption, {h: 24, text: this.caption});
+
+        this.on('caption', v=>this.captionComponent.text=v)
+        this.createWindowComponent(this.captionComponent);
         this.on("node", (node) => {
           if(node.caption) node.on("caption", caption => this.caption = caption);
         });
         const move = new Move({
           area: window,
-          handle: caption.handle,
+          handle: this.captionComponent.handle,
           scale: ()=>this.getScale(this),
           before: ()=>{},
           movement: ({x,y})=>{
@@ -123,9 +122,16 @@ export default class Window {
           after: ()=>{},
         });
         this.addDisposable(move);
+
+        const select = new Select({
+          component: this,
+          handle: this.captionComponent.handle,
+        });
+        this.addDisposable(select);
+
+        this.on('selected', v=>this.captionComponent.selected=v)
+
       }
-
-
 
       const focus = new Focus({
         handle: this.scene, // TIP: set to caption above to react to window captions only
@@ -133,25 +139,18 @@ export default class Window {
         element: ()=> this.scene,
       });
       this.addDisposable(focus);
-      
+
     },
 
+    clean(){
+      console.log('LLL * Window Clean');
+    },
 
-
-
-
-
-
-
-
-
-
-
-
+    destroy(){
+      console.log('LLL * Window Destroy');
+    },
 
   };
 
-  constraints = {
-  };
 
 }

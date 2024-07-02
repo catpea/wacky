@@ -1,6 +1,5 @@
 import Workspace from './Workspace.js';
-import Window from './Window.js';
-import Port from './Port.js';
+import Group from './Group.js';
 import Hello from './Hello.js';
 import Terminal from './Terminal.js';
 import Editor from './Editor.js';
@@ -14,8 +13,7 @@ import Analysis from './Analysis.js';
 const components = {
   Workspace,
 
-  Port,
-  Window,
+  Group,
   Pipe,
 
   Hello,

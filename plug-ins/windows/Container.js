@@ -20,27 +20,31 @@ export default class Container {
     initialize(){
 
       this.on("children.created", (child) => {
+        console.log('LLL children.created');
         child.scene = this.scene;
-        child.start();
+        child.start(); // <- state machine, calls otehr functions
         this.layout.manage(child);
       }, {replay: true});
 
       this.on("children.removed", (child) => {
-        child.stop();
+        console.log('LLL children.removed', child.oo.name);
+        child.stop(); // <- state machine, calls otehr functions
         this.layout.forget(child);
       });
 
     },
 
-    mount(){
-
-
-
+    clean(){
+      console.log('LLL Destroy Container Children');
+      this.children.map( ({id})=>this.children.remove(id) );
     },
 
     destroy(){
-      this.removeElements()
-    }
+    },
+    exit(){
+    },
+
+
 
   }
 

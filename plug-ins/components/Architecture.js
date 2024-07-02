@@ -34,6 +34,7 @@ export default class Architecture {
     },
 
     destroy(){
+      console.log('LLL Architecture Destroy');
       this.component.$destroy();
     },
 

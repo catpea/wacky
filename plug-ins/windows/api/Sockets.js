@@ -25,7 +25,9 @@ export default class Sockets {
     },
 
     removeSocket(id){
+      console.log('LLL BEFORE this.sockets.remove', id, this.sockets.map(o=>o.id).join(', '));
       this.sockets.remove(id);
+      console.log('LLL AFTER this.sockets.remove!', id, this.sockets.map(o=>o.id).join(', '));
     },
 
     send(name, packet){
@@ -44,6 +46,7 @@ export default class Sockets {
   methods = {
 
     initialize(){
+
       this.pipe = new EventEmitter();
       this.socketLayout = new SocketLayout(this, {source: 'sockets'});
 
@@ -57,20 +60,26 @@ export default class Sockets {
       }
 
       this.on("sockets.created", (socket) => {
-        socket.start();
+        console.log('LLL sockets.created');
+        socket.start(); //<-- state machine cals multiple functions
         this.socketLayout.manage(socket);
         parent.getApplication().socketRegistry.create(socket);
-        // this.createPipe(socket.name, socket.side);
-      }, {replay: true});
+      }, {replay: true} );
 
+      console.log('GGG Registering this.on("sockets.removed"....');
       this.on("sockets.removed", (socket) => {
-        socket.stop();
-        // this.removePipe(socket.name);
-        parent.getApplication().socketRegistry.remove(id);
-        this.removeControlAnchor(socket.id);
-        this.socketLayout.forget(socket);
+        console.log('LLL $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  sockets.removed');
+        socket.stop(); //<-- state machine cals multiple functions
+        parent.getApplication().socketRegistry.remove(socket.id);
+
+        // this.removeControlAnchor(socket.id);
+        // this.socketLayout.forget(socket);
       });
 
+    },
+
+    clean(){
+      this.sockets.map( ({id})=>this.removeSocket(id) );
     },
 
 

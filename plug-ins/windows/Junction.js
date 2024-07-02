@@ -81,9 +81,7 @@ export default class Junction {
 
     },
 
-    destroy(){
-      this.removeElements()
-    }
+
 
   }
 

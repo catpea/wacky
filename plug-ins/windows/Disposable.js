@@ -23,8 +23,16 @@ export default class Disposable {
     // Utils
 
     addDisposableFromMethods(object, names) {
-      for (const methodName of names.split(' ').map(o=>o.trim()).filter(o=>o)){
-        this.addDisposable(()=>object[methodName]());
+      const methods = names.split(' ').map(o=>o.trim()).filter(o=>o);
+      for (const methodName of methods){
+        console.log(`HHH INIT addDisposableFromMethods for ${object.id} ${methodName}`);
+        this.addDisposable({
+          description: `addDisposableFromMethods for ${object.id} ${methodName}`,
+          destroy(){
+            console.log(`HHH DESTROY addDisposableFromMethods for ${object.id} ${methodName}`);
+            object[methodName]();
+          }
+        });
       }
     },
 
@@ -36,11 +44,11 @@ export default class Disposable {
       emitter.on(eventName, callback);
       this.addDisposable({
         destroy(){
-          emitter.removeListener(eventName, callback);
+          emitter.off(eventName, callback);
         }
       });
     },
-    
+
     addDisposableFromSmartEmitter(emitter, eventName, callback, options) {
       this.addDisposable( emitter.on(eventName, callback, options) );
     }

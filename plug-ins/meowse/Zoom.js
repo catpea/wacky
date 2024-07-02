@@ -77,7 +77,6 @@ export default class Zoom {
   }
 
   destroy(){
-    this.removeStartedObserver();
     this.area.removeEventListener(this.event, this.wheelHandler);
     this.handle.removeEventListener(this.event, this.wheelHandler);
     this.area.removeEventListener('mousemove', this.movelHandler);

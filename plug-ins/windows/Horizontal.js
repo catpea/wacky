@@ -4,6 +4,7 @@ import { HorizontalLayout } from "/plug-ins/layout-manager/index.js";
 import Container from "/plug-ins/windows/Container.js";
 
 export default class Horizontal {
+
   static extends = [Container];
   methods = {
     initialize(){

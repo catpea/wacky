@@ -91,10 +91,7 @@ export default class Control {
 
 
 
-    destroy(){
 
-      this.removeElements()
-    }
 
   }
 

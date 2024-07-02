@@ -51,9 +51,15 @@ export default class Application {
   };
 
   methods = {
+
     initialize(){
       this.controller = new EventEmitter();
       this.getRoot().applications.create(this);
     },
+
+    destroy(){
+      console.log('LLL Application Destroy');
+    }
+
   };
 }
