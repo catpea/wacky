@@ -5,41 +5,33 @@ wacky /wăk′ē/ - informal - unusual in a pleasing or exciting way // zany, lu
 
 ## TODO
 
+- [ ] Port Control widget inside evey window that controls window anchors
+- [ ] Junction
+- [ ] Function Node With A Code Editor
+- [ ] Selection Manager
 - [ ] any and all are not automatically collected check for manual garbage collection attempts
 - [ ] this.pipe.on needs to be destructible
 - [ ] layout manager manage and cleanup may need work
-
----
-
-- [ ] Selection Manager
-- [ ] Convert Selection To Window
-- [ ] Selete Connection
-- [ ] Delete Component
-- [ ] Resizable Components
-
----
-
-- [ ] Minimize Window To A Window Face
-- [ ] Face
+- [ ] Convert Selection To Window (Make A Component)
+- [ ] Restore iframe (just use Foreign)
+- [ ] Non-Selectable Text Everywhere
+- [ ] UI: Proper (Svelte based) Toolbar for Icons
+- [ ] Minimize Window To A Window Face ???
+- [ ] Face (Window Designer ala VB6)
 - [ ] Face Toolbox
 
 ---
 
-- [ ] Non-Selectable Text
-- [ ] Function Node
-- [ ] Ports
-- [ ] Port Node
-- [ ] Pipe
-- [ ] Junction
+- [x] Remove Pipe When Window Is Destroyed
+- [x] Select Connection
+- [x] Delete Component
+- [x] Re-sizable Components
+- [x] Ports
+- [x] Port Node
+- [x] Pipe
 - [x] Editor
 - [x] Terminal
 - [x] HTML Window (possibly for svelte)
-- [ ] Restore iframe (just use Foreign)
-- [ ] Proper Toolbar for Icons
-- [ ] Port Control widget inside evey window that controls window anchors
-
----
-
 - [x] Cascading Zoom
 - [x] Labels must monitor transform stack from their placement up.
 - [x] .s is not working with laut manager and the anomaly in pane.

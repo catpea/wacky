@@ -34,7 +34,7 @@ export default class KeyboardMonitor extends CuteEmitter {
 	}
 
 	destroy() {
-		this.handle.removeEventListener('keydown', this.keyDownListener);
+		this.source.removeEventListener('keydown', this.keyDownListener);
 	}
 
 

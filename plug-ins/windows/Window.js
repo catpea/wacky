@@ -36,6 +36,7 @@ export default class Window {
   };
 
   traits = {
+ 
     createWindowComponent(component){
       component.parent = this;
       this.children.create(component);

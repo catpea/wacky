@@ -8716,6 +8716,20 @@
       url: null
     };
     traits = {
+      removeApplication() {
+        for (const o of this.pane.applications.filter((o2) => o2.selected)) {
+          console.log("EEE", o.oo.name);
+          if (o.oo.name == "Pipe") {
+            this.pane.elements.remove(o.id);
+          } else {
+            for (const relatedPipe of this.pane.applications.filter((x) => x.oo.name == "Pipe").filter((x) => x.to == o.id || x.from == o.id)) {
+              console.log("EEE pipe", relatedPipe);
+              this.pane.elements.remove(relatedPipe.id);
+            }
+            this.pane.elements.remove(o.id);
+          }
+        }
+      },
       /**
           connectObservableToWritable USAGE:
           this.xWritable = writable(0);
@@ -10969,12 +10983,7 @@
         this.flexible = true;
       },
       mount() {
-        this.addDisposableFromSmartEmitter(this.getRoot().keyboard, "Remove", (e) => {
-          console.log("Cute Emitter Heard Remove", this.applications.filter((o) => o.selected));
-          for (const { id } of this.applications.filter((o) => o.selected)) {
-            this.elements.remove(id);
-          }
-        });
+        this.addDisposableFromSmartEmitter(this.getRoot().keyboard, "Remove", () => this.getApplication().removeApplication());
         const paneBody = new Instance(Viewport, { parent: this, classes: this.classes, flexible: true });
         this.viewport = paneBody;
         this.getApplication().viewport = paneBody;
@@ -11028,7 +11037,7 @@
               action: () => {
                 console.log("Creating", className, this.panX, this.panY, this.zoom);
                 const node = new Instance(Node, {
-                  id: 1,
+                  id: uuid3(),
                   origin: this.getApplication().id,
                   type: className,
                   x: tx,
@@ -11190,7 +11199,7 @@
       this.source.addEventListener("keydown", this.keyDownListener);
     }
     destroy() {
-      this.handle.removeEventListener("keydown", this.keyDownListener);
+      this.source.removeEventListener("keydown", this.keyDownListener);
     }
   };
 

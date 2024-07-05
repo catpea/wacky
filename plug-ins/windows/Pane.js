@@ -138,15 +138,8 @@ export default class Pane {
     mount(){
       // this.parent.elements = this.elements;
 
-      this.addDisposableFromSmartEmitter(this.getRoot().keyboard, 'Remove', (e)=>{
+      this.addDisposableFromSmartEmitter( this.getRoot().keyboard, 'Remove', ()=>this.getApplication().removeApplication() );
 
-        console.log('Cute Emitter Heard Remove', this.applications.filter(o=>o.selected));
-
-        for (const {id} of this.applications.filter(o=>o.selected)) {
-          this.elements.remove(id);
-        }
-
-      });
 
 
       // Add Viewport
@@ -217,7 +210,7 @@ export default class Pane {
             action:()=>{
               console.log('Creating', className, this.panX, this.panY, this.zoom);
               const node = new Instance(Node, {
-                id:1,
+                id:uuid(),
                 origin: this.getApplication().id,
                 type:className,
                 x:tx,

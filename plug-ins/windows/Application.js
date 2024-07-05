@@ -17,6 +17,26 @@ export default class Application {
 
   traits = {
 
+
+      removeApplication(){
+
+
+        for (const o of this.pane.applications.filter(o=>o.selected)) {
+          console.log('EEE',o.oo.name);
+          if(o.oo.name == 'Pipe'){
+            this.pane.elements.remove(o.id);
+          }else{ //
+            for (const relatedPipe of this.pane.applications.filter(x=>x.oo.name == 'Pipe').filter(x=>(x.to==o.id||x.from==o.id))) {
+              console.log('EEE pipe', relatedPipe);
+
+              this.pane.elements.remove(relatedPipe.id);
+            }
+            this.pane.elements.remove(o.id);
+          }
+        }
+
+      },
+
     /**
     connectObservableToWritable USAGE:
     this.xWritable = writable(0);
