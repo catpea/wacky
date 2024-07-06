@@ -9,7 +9,6 @@ class Connect extends Drag {
   geometry = { x1: 0, y1: 0, x2: 0, y2: 0, };
 
   before(){
-    console.log(`Connect: before`);
     this.line = svg.line({
       class: 'editor-anchor-line',
       style: {
@@ -56,7 +55,6 @@ class Connect extends Drag {
       const control = e.target.dataset.control;
       const port = e.target.dataset.port;
 
-      console.log(`Creating a node in ${this.component.getApplication().id}`);
       this.component.getApplication().pane.createNode({
         id: uuid(),
         type: 'Pipe',
@@ -66,7 +64,6 @@ class Connect extends Drag {
         to: control,
         in: port,
       });
-      console.log('Node result', this.component.getApplication().id, this.component.getApplication().socketRegistry.raw.map(o=>o.id));
 
     }
 

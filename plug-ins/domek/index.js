@@ -120,7 +120,6 @@ function front(element) {
 	// parentElement.appendChild(element);
 
 	 const siblings = Array.from(parentElement.children).filter(item=>item!==element);
-	 // console.log(`ZZZ: ${element.id} has ${siblings.length} siblings: `, siblings.map(o=>o.id).join(' > '));
 
 		for (const item of siblings) {
 				parentElement.insertBefore(item, element);

@@ -7,10 +7,10 @@ export class EventSystem {
   }
 
   create(name, type){
-    console.log('EMITTER CREATE', this.root.id, name, type);
+    console.info('EMITTER CREATE', this.root.id, name, type);
   }
 
   destroy(name){
-    console.log('EMITTER DESTROY', name );
+    console.info('EMITTER DESTROY', name );
   }
 }

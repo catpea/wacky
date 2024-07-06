@@ -6385,18 +6385,15 @@
       this.instance = instance10;
       this.instance.oo.extends.push(Class);
       this.collectClasses(Class.extends);
-      console.log("PPP all", this.instance.oo.extends);
       this.instantiateSuperclasses();
     }
     collectClasses(list) {
       if (!Array.isArray(list))
         return;
       for (const Class of list.filter((o) => o)) {
-        console.log(Class);
         this.instance.oo.extends.push(Class);
       }
       for (const Class of list.filter((o) => o)) {
-        console.log(Class);
         this.collectClasses(Class.extends);
       }
     }
@@ -6584,12 +6581,10 @@
       const that = this;
       this.oo.getMethods = function() {
         const response = that.oo.specifications.map(({ name, methods: methods2 }) => ({ name, data: Object.entries(methods2).map(([name2, code]) => ({ name: name2, code: "function " + code.toString() })) }));
-        console.log(response);
         return response;
       };
       this.oo.getTraits = function() {
         const response = that.oo.specifications.map(({ name, traits }) => ({ name, data: Object.entries(traits).map(([name2, code]) => ({ name: name2, code: "function " + code.toString() })) }));
-        console.log(response);
         return response;
       };
       this.on = function(eventPath, observerCallback, options, control) {
@@ -6598,7 +6593,6 @@
         if (!observableData[name]) {
           this.oo.createObservable(name, this[name]);
           if (!observableData[name]) {
-            console.log(this);
             throw new Error(`Failed to create a dynamic observable "${name}" via .on on object ${this.oo.name}`);
           }
         }
@@ -6663,8 +6657,6 @@
             });
             if (!transitionAllowed) {
               throw new Error(`Cannot transition state from ${from} (current) to ${to}, only ${ensureArray(state[currentState].can).join(", ")} allowed.`);
-            }
-            if (transitionAllowed) {
             }
             const stateFunctions2 = ensureArray(state[stateName2].run);
             for (const functionName of stateFunctions2) {
@@ -6774,7 +6766,6 @@
       if (options.autorun && this.#value !== void 0)
         observerCallback(this.#value);
       return () => {
-        console.log(`UNOBSERVING ${eventName}`);
         this.unobserve(eventName, observerCallback);
       };
     }
@@ -6784,7 +6775,6 @@
     notify(eventName, eventData, ...extra) {
       if (Array.isArray(this.#observers[eventName])) {
         this.#observers[eventName].forEach((observerCallback) => observerCallback(eventData, ...extra));
-      } else {
       }
     }
     status() {
@@ -6854,11 +6844,6 @@
       this.#observers[eventName] = this.#observers[eventName].filter((obs) => obs !== observerCallback);
     }
     notify(eventName, eventData, ...extra) {
-      if (this.#observers[eventName]) {
-        console.log(`GGG We have ${this.#observers[eventName].length} for ${this.name}.${eventName}`);
-      } else {
-        console.log(`GGG We have NO OBSERVERS for ${this.name}.${eventName}`);
-      }
       if (Array.isArray(this.#observers[eventName])) {
         for (const observerCallback of this.#observers[eventName]) {
           observerCallback(eventData, ...extra);
@@ -6890,7 +6875,6 @@
       }
       const item = this.#value.find((o) => o.id === id);
       this.#value = this.#value.filter((o) => o !== item);
-      console.log(`LLL Notify removeal of ${item?.id}`);
       this.notify("removed", item);
       this.notify("changed", this.#value);
     }
@@ -6984,10 +6968,8 @@
           document.querySelector("html").dataset.uiTheme = id;
         });
         this.on("themes.created", (list) => {
-          console.log("GGG themes created", { list });
         });
         this.on("themes.removed", (x) => {
-          console.log("GGG themes removed", x);
         });
         this.on("themes.changed", (list) => {
         });
@@ -7324,11 +7306,9 @@
       addDisposableFromMethods(object, names) {
         const methods = names.split(" ").map((o) => o.trim()).filter((o) => o);
         for (const methodName of methods) {
-          console.log(`HHH INIT addDisposableFromMethods for ${object.id} ${methodName}`);
           this.addDisposable({
             description: `addDisposableFromMethods for ${object.id} ${methodName}`,
             destroy() {
-              console.log(`HHH DESTROY addDisposableFromMethods for ${object.id} ${methodName}`);
               object[methodName]();
             }
           });
@@ -7554,15 +7534,12 @@
         });
       },
       clean() {
-        console.log("LLL Component Clean");
       },
       destroy() {
-        console.log("LLL Component Destroy");
         this.dispose();
         this.removeElements();
       },
       exit() {
-        console.log("LLL Component Exit");
       }
     };
   };
@@ -7689,7 +7666,6 @@
     line;
     geometry = { x1: 0, y1: 0, x2: 0, y2: 0 };
     before() {
-      console.log(`Connect: before`);
       this.line = svg.line({
         class: "editor-anchor-line",
         style: {
@@ -7731,7 +7707,6 @@
       if (isOverAnotherPort) {
         const control = e.target.dataset.control;
         const port = e.target.dataset.port;
-        console.log(`Creating a node in ${this.component.getApplication().id}`);
         this.component.getApplication().pane.createNode({
           id: uuid2(),
           type: "Pipe",
@@ -7740,7 +7715,6 @@
           to: control,
           in: port
         });
-        console.log("Node result", this.component.getApplication().id, this.component.getApplication().socketRegistry.raw.map((o) => o.id));
       }
     }
   };
@@ -7814,12 +7788,6 @@
           component: this
         });
         this.addDisposable(connect);
-      },
-      clean() {
-        console.log("LLL Socket heard clean");
-      },
-      destroy() {
-        console.log("LLL Socket heard destroy");
       }
     };
   };
@@ -8071,9 +8039,7 @@
         this.sockets.create(socket);
       },
       removeSocket(id) {
-        console.log("LLL BEFORE this.sockets.remove", id, this.sockets.map((o) => o.id).join(", "));
         this.sockets.remove(id);
-        console.log("LLL AFTER this.sockets.remove!", id, this.sockets.map((o) => o.id).join(", "));
       },
       send(name, packet) {
         this.pipe.emit(name, packet);
@@ -8096,14 +8062,11 @@
           parent = this.getApplication();
         }
         this.on("sockets.created", (socket) => {
-          console.log("LLL sockets.created");
           socket.start();
           this.socketLayout.manage(socket);
           parent.getApplication().socketRegistry.create(socket);
         }, { replay: true });
-        console.log('GGG Registering this.on("sockets.removed"....');
         this.on("sockets.removed", (socket) => {
-          console.log("LLL $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  sockets.removed");
           socket.stop();
           parent.getApplication().socketRegistry.remove(socket.id);
         });
@@ -8129,19 +8092,16 @@
     methods = {
       initialize() {
         this.on("children.created", (child) => {
-          console.log("LLL children.created");
           child.scene = this.scene;
           child.start();
           this.layout.manage(child);
         }, { replay: true });
         this.on("children.removed", (child) => {
-          console.log("LLL children.removed", child.oo.name);
           child.stop();
           this.layout.forget(child);
         });
       },
       clean() {
-        console.log("LLL Destroy Container Children");
         this.children.map(({ id }) => this.children.remove(id));
       },
       destroy() {
@@ -8173,59 +8133,6 @@
       __name(this, "Control");
     }
     static extends = [Component];
-    properties = {
-      // anchorage: null,
-    };
-    observables = {
-      // anchors:[],
-    };
-    constraints = {
-      mount: {
-        ".scene is required to start the universe": function() {
-          if (!this.scene) {
-            return { error: ".svg not found" };
-          }
-        }
-      }
-    };
-    methods = {
-      initialize() {
-      },
-      mount() {
-      }
-      //
-      // createPipe(name, direction){
-      //   const id = [name, this.getRootContainer().id].join(':');
-      //   const pipe = new Pipe(id, direction);
-      //   const origin = globalThis.project.origins.get(this.getRootContainer().node.origin);
-      //   origin.root.pipes.create(pipe);
-      // },
-      //
-      // removePipe(name){
-      //   const id = [name, this.getRootContainer().id].join(':');
-      //   const origin = globalThis.project.origins.get(this.getRootContainer().node.origin);
-      //   origin.root.pipes.get(id).stop();
-      //   origin.root.pipes.remove(id);
-      // },
-      // createControlAnchor({name, side}){
-      //   console.log('TODO: createControlAnchor is disabled');
-      //   return
-      //   if(!name) throw new Error(`It is not possible to create an anchor without an anchor name.`);
-      //   if(!side===undefined) throw new Error(`It is not possible to create an anchor without specifying a side, 0 or 1.`);
-      //   const id = [name, this.getRootContainer().id].join(':')
-      //   const anchor = new Instance(Anchor, { id, name, side, parent: this, scene: this.scene } )
-      //   const origin = globalThis.project.origins.get(this.getRootContainer().node.origin);
-      //   origin.root.anchors.create(anchor);
-      //   this.anchors.create(anchor);
-      // },
-      //
-      // removeControlAnchor(id){
-      //   this.anchors.remove(id);
-      //   const origin = globalThis.project.origins.get(this.getRootContainer().node.origin);
-      //   origin.root.anchors.remove(id);
-      // },
-      //
-    };
   };
 
   // plug-ins/windows/Horizontal.js
@@ -8326,9 +8233,6 @@
         this.any(["x", "y"], ({ x, y }) => updateZUI(this.el.Caption, { x: (x + this.s) * globalThis.project.zoom, y: (y + this.s) * globalThis.project.zoom }, { style: { scale: 1 }, x: x + this.s, y: y + this.s }));
         this.any(["x", "y", "w", "h"], ({ x, y, w: width, h: height }) => updateZUI(clipPathRect, { x: x * globalThis.project.zoom, y: y * globalThis.project.zoom, width: width * globalThis.project.zoom, height: this.h * globalThis.project.zoom }, { x, y, width, height }));
         this.appendElements();
-      },
-      destroy() {
-        console.log("LLL LABEL SAYS HI!", this.el.Caption);
       }
     };
   };
@@ -8447,11 +8351,7 @@
         this.addDisposableFromEvent(maximizeButton.handle, "click", windowToggle);
       },
       clean() {
-        console.log("LLL Caption got clean");
         this.horizontal.stop();
-      },
-      destroy() {
-        console.log("LLL Caption got destroy");
       }
     };
   };
@@ -8691,12 +8591,6 @@
           element: () => this.scene
         });
         this.addDisposable(focus);
-      },
-      clean() {
-        console.log("LLL * Window Clean");
-      },
-      destroy() {
-        console.log("LLL * Window Destroy");
       }
     };
   };
@@ -8718,12 +8612,10 @@
     traits = {
       removeApplication() {
         for (const o of this.pane.applications.filter((o2) => o2.selected)) {
-          console.log("EEE", o.oo.name);
           if (o.oo.name == "Pipe") {
             this.pane.elements.remove(o.id);
           } else {
             for (const relatedPipe of this.pane.applications.filter((x) => x.oo.name == "Pipe").filter((x) => x.to == o.id || x.from == o.id)) {
-              console.log("EEE pipe", relatedPipe);
               this.pane.elements.remove(relatedPipe.id);
             }
             this.pane.elements.remove(o.id);
@@ -8768,9 +8660,6 @@
       initialize() {
         this.controller = new EventEmitter();
         this.getRoot().applications.create(this);
-      },
-      destroy() {
-        console.log("LLL Application Destroy");
       }
     };
   };
@@ -8896,8 +8785,6 @@
     //   let parentZoom = 1;
     //   let locationX = 0;
     //   let locationY = 0;
-    //
-    //   // console.log(locationX, locationY);
     //
     //   for (const [i,t] of localList.entries()) {
     //
@@ -10416,13 +10303,6 @@
           });
         });
       },
-      stop() {
-        console.log("todo: stopping root application");
-      },
-      destroy() {
-        console.log("todo: destroying root application");
-        this.dispose();
-      },
       // --- //
       step(data) {
         this.pipe.emit("out", { source: this, detail: data });
@@ -10648,7 +10528,6 @@
         this.getApplication().controller.on("step", (x) => {
           if (this.dataQueue.length && !this.job) {
             this.job = this.dataQueue.shift();
-            console.log("Got Job", this.job);
             this.displayTitle = this.job.attr.title;
           } else if (this.job) {
             this.step(this.job);
@@ -10696,13 +10575,6 @@
         this.on("displayTitle", (displayTitle) => this.ui.$set({ displayTitle }));
         this.on("displayStatus", (displayStatus) => this.ui.$set({ displayStatus }));
         this.on("displaySample", (displaySample) => this.ui.$set({ displaySample }));
-      },
-      stop() {
-        console.log("todo: stopping root application");
-      },
-      destroy() {
-        console.log("todo: destroying root application");
-        this.dispose();
       }
     };
   };
@@ -10785,13 +10657,6 @@
         this.foreign = new Instance(Foreign);
         this.createWindowComponent(this.foreign);
         this.ui = new Map_default({ target: this.foreign.body });
-      },
-      stop() {
-        console.log("todo: stopping root application");
-      },
-      destroy() {
-        console.log("todo: destroying root application");
-        this.dispose();
       }
     };
   };
@@ -10874,13 +10739,6 @@
         this.foreign = new Instance(Foreign);
         this.createWindowComponent(this.foreign);
         this.ui = new Reduce_default({ target: this.foreign.body });
-      },
-      stop() {
-        console.log("todo: stopping root application");
-      },
-      destroy() {
-        console.log("todo: destroying root application");
-        this.dispose();
       }
     };
   };
@@ -11018,7 +10876,6 @@
           ui.start();
         }, { replay: true });
         this.on("elements.removed", ({ id }) => {
-          console.log("GGGG elements.removed", id);
           this.applications.get(id).stop();
           this.applications.get(id).destroy();
           this.applications.remove(id);
@@ -11035,7 +10892,6 @@
               text: `New ${className}`,
               value: className,
               action: () => {
-                console.log("Creating", className, this.panX, this.panY, this.zoom);
                 const node = new Instance(Node, {
                   id: uuid3(),
                   origin: this.getApplication().id,
@@ -11095,13 +10951,9 @@
           );
       },
       clean() {
-        console.log("TODO pane.clean actually stop all the applications elements anchors pipes");
         this.elements.map(({ id }) => this.elements.remove(id));
         this.anchors.map(({ id }) => this.anchors.remove(id));
         this.pipes.map(({ id }) => this.pipes.remove(id));
-      },
-      destroy() {
-        console.log("LLL pane.destroy");
       }
     };
   };
@@ -11131,10 +10983,8 @@
         this.createWindowComponent(this.pane);
       },
       clean() {
-        console.log("LLL group clean", this.children);
       },
       destroy() {
-        console.log("LLL group destroy");
       }
     };
   };
@@ -11192,10 +11042,8 @@
     mount() {
       const self = this;
       this.keyDownListener = function(e) {
-        console.log(keyboard_default[e.key]);
         self.emit(keyboard_default[e.key], e);
       };
-      console.log("BBB MONITOR UP");
       this.source.addEventListener("keydown", this.keyDownListener);
     }
     destroy() {
@@ -11447,11 +11295,9 @@
           this.parent.closeMenu();
         });
         this.on("h", (h) => {
-          console.log({ h });
           this.foreign.h = h - this.p * 2 - this.b * 2;
         });
         this.on("show", (show) => {
-          console.log("menu on show", show);
           if (show) {
             this.el.Background.style.display = "block";
             this.foreign.body.style.display = "block";
@@ -11460,9 +11306,6 @@
             this.foreign.body.style.display = "none";
           }
         });
-      },
-      destroy() {
-        console.log("todo: destroying root application");
       }
     };
   };
@@ -11506,7 +11349,6 @@
         this.on("h", (height) => update(this.el.Overlay, { height }));
         this.appendElements();
         this.el.Overlay.addEventListener("click", (e) => {
-          console.log("Overlay click");
           this.parent.closeMenu();
         });
       },
@@ -11523,7 +11365,6 @@
         this.onResizeWindow();
       },
       onResizeWindow() {
-        console.log(this);
         update(this.el.Overlay, { width: this.getRoot().svg.clientWidth });
         update(this.el.Overlay, { height: this.getRoot().svg.clientHeight });
       }
@@ -11567,7 +11408,6 @@
     };
     methods = {
       initialize() {
-        console.log("Workspace Initialize!");
         this.keyboard = new KeyboardMonitor();
         this.addDisposable(this.keyboard);
       },
@@ -11577,7 +11417,7 @@
           $(this.oo.name).append(this.pane.getXml());
         }
         const xml = $.root().html();
-        console.log(xml);
+        console.info(xml);
         return xml;
       }
     };
@@ -11993,7 +11833,7 @@
         });
         var command = "";
         const dataHandler = /* @__PURE__ */ __name((e) => {
-          console.log("term.onData", e);
+          console.info("term.onData", e);
           switch (e) {
             case "":
               term.write("^C");
@@ -12075,7 +11915,7 @@
         runFakeTerm();
       },
       destroy() {
-        console.log(`TODO!!!!!!!!!!!! Terminal Got Destroyed`);
+        console.info(`TODO!!!!!!!!!!!! Terminal Got Destroyed`);
       }
     };
   };
@@ -12210,16 +12050,12 @@
         });
         this.any("from out", ({ from: nodeId, out: portName }) => {
           const socketId = [nodeId, portName].join("/");
-          console.log("from out", socketId, this.getApplication().id);
-          console.log(`this.any from out (application=${this.getApplication().id})`, this.getApplication().pane.elements.raw.map((o) => o.id));
-          console.log(`this.any from out (application=${this.getApplication().id})`, this.getApplication().socketRegistry.raw.map((o) => o.id));
           const socket = this.getApplication().socketRegistry.get(socketId);
           socket.on("x", (x) => this.x1 = x);
           socket.on("y", (y) => this.y1 = y);
         });
         this.any("to in", ({ to: nodeId, in: portName }) => {
           const socketId = [nodeId, portName].join("/");
-          console.log("to in", socketId);
           const socket = this.getApplication().socketRegistry.get(socketId);
           socket.on("x", (x) => this.x2 = x);
           socket.on("y", (y) => this.y2 = y);
@@ -12228,7 +12064,6 @@
         this.all("from out to in", (o) => {
           let connectionId = [o.from, o.out, o.to, o.in].join("+");
           if (this.connectionId == connectionId) {
-            console.log("DUPE", this.connectionId);
             return;
           }
           let connect = [o.from, o.out, o.to, o.in].every((i) => i);
@@ -12239,8 +12074,6 @@
             const control2 = this.getApplication().socketRegistry.get(socket2).control;
             this.addDisposableFromEmitter(control1.pipe, o.out, (packet) => control2.pipe.emit(o.in, packet));
             this.connectionId = connectionId;
-          } else {
-            console.log("DISCO", [o.from, o.out, o.to, o.in]);
           }
         });
         this.any(["x1", "y1", "x2", "y2"], (packet) => update(this.el.Midpoint, midpoint(packet)));
@@ -13149,7 +12982,6 @@
         this.addDisposable(stopWheel(this.foreign.body));
       },
       destroy() {
-        console.log("LLL Architecture Destroy");
         this.component.$destroy();
       }
     };
@@ -13158,11 +12990,9 @@
   // plug-ins/code-tools/index.js
   var import_esprima = __toESM(require_esprima());
   function getFunctionSignature(src) {
-    console.log(src);
     const response = [];
     src = src.replace(/\?\./g, ".");
     const ast = (0, import_esprima.parseScript)(src, { tolerant: true });
-    console.log(ast.body[0].params);
     for (const param of ast.body[0].params) {
       switch (param.type) {
         case "Identifier":

@@ -25,7 +25,6 @@ export default class EventEmitter {
     // Method to emit an event
     emit(eventName, ...args) {
         const listeners = this.events[eventName];
-        // console.log('EMITTING', eventName, listeners?.length, ...args);
         if (listeners) {
             listeners.forEach(listener => listener.apply(this, args));
         }

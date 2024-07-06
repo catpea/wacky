@@ -64,12 +64,10 @@ export default class Menu {
       });
 
       this.on('h', (h)=>{
-        console.log({h});
         this.foreign.h = h - (this.p*2) - (this.b*2);
       });
 
       this.on('show', (show)=>{
-        console.log('menu on show', show);
         if(show){
           this.el.Background.style.display = 'block';
           this.foreign.body.style.display = 'block';
@@ -83,11 +81,9 @@ export default class Menu {
     },
 
 
- 
 
-    destroy(){
-      console.log('todo: destroying root application');
-    },
+
+
 
   };
 }

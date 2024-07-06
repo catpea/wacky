@@ -23,7 +23,6 @@ export default class Stepper {
 
         if(this.dataQueue.length && !this.job){
           this.job = this.dataQueue.shift();
-          console.log('Got Job', this.job );
           this.displayTitle = this.job.attr.title;
         } else if(this.job){
           this.step(this.job);

@@ -36,12 +36,9 @@ export default class Group {
     },
 
     clean(){
-      console.log('LLL group clean', this.children);
-      // if(this.captionComponent) this.captionComponent.stop();
     },
 
     destroy(){
-      console.log('LLL group destroy');
     },
   };
 }

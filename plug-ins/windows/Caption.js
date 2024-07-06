@@ -37,8 +37,6 @@ export default class Caption {
   methods = {
 
     initialize(){
-      // console.log(`%cComponent.initialize!`, 'background: hsl(180, 80%, 60%); color: black;', this);
-
     },
 
     mount(){
@@ -122,14 +120,8 @@ export default class Caption {
     },
 
     clean(){
-      console.log('LLL Caption got clean');
       this.horizontal.stop(); // state machine it calls clean destroy and exit
     },
-
-    destroy(){
-      console.log('LLL Caption got destroy');
-    },
-
 
   }
 

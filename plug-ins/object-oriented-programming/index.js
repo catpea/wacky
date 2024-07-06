@@ -10,21 +10,16 @@ export class Inheritance {
     this.instance.oo.extends.push(Class)
     this.collectClasses(Class.extends);
 
-    console.log('PPP all', this.instance.oo.extends);
-    //??? this.instance.oo.specifications.push(specification);
     this.instantiateSuperclasses()
-    // console.log(this.instance);
   }
 
   collectClasses(list){
     if (!Array.isArray(list)) return;
 
     for (const Class of list.filter(o=>o)) {
-      console.log(Class);
       this.instance.oo.extends.push(Class);
     }
     for (const Class of list.filter(o=>o)) {
-      console.log(Class);
       this.collectClasses(Class.extends);
     }
   }
@@ -56,8 +51,6 @@ export class Instance {
   constructor(Class, data){
 
     const specification = new Class(); // specification is the class we are instantiating.
-    // console.log(`%cCreate Class (${specification.constructor.name})`, 'background: hsl(124, 50%, 60%); color: black;');
-
     this.oo = {}
     this.oo.scratch = {}; // space for extensions (cytoscape easter egg)
     this.oo.name = specification.constructor.name;
@@ -71,20 +64,6 @@ export class Instance {
     this.oo.specifications = [];
 
     new Inheritance({Class, instance:this, specification, root:this});
-
-    // // Install Super
-    // if(!dependency){
-    //   const reverseStack = Array.from( this.oo.specifications ).reverse();
-    //   // reverseStack.pop()
-    //   console.log('reverseStack',reverseStack);
-    //   let previous = undefined;
-    //   for (const inherited of reverseStack ) {
-    //     inherited.Superclass = previous;
-    //     console.log('EE', inherited.Parent, inherited);
-    //     previous = inherited;
-    //   }
-    //   this.Superclass = previous
-    // }
 
     const defaultState = {
         current: 'initial',
@@ -169,8 +148,6 @@ export class Instance {
     //         configurable: false,
     //       });
     //
-    //       console.log(`DEFINED ${methodName} on ${this.constructor.name}`);
-    //     console.log(methodName, this[methodName]);
     //
     //     } // for properties
     //   } // if
@@ -232,7 +209,6 @@ export class Instance {
       if(!observableExists){
 
         if(isArray){
-          // console.log('Creating array');
           observableData[observableName] = new List(observableName, observableValue);
           Object.defineProperty(this, observableName, {
             get: () => observableData[observableName].value,
@@ -240,7 +216,6 @@ export class Instance {
             configurable: false,
           });
         }else{ // primitive
-          // console.log('Creating primitive');
           observableData[observableName] = new Primitive(observableName, observableValue);
           Object.defineProperty(this, observableName, {
             get: () => observableData[observableName].value,
@@ -249,7 +224,6 @@ export class Instance {
           });
         }
 
-        // console.log('xx xx', observableData[observableName]);
 
 
       }
@@ -307,12 +281,10 @@ export class Instance {
     const that = this;
     this.oo.getMethods = function(){
       const response = that.oo.specifications.map( ({name, methods})=>({name,data: Object.entries(methods)          .map( ([name,code]) => ({name,code: 'function ' + code.toString()}) )                }) );
-      console.log(response);
       return response
     }
     this.oo.getTraits = function(){
       const response = that.oo.specifications.map( ({name, traits})=>({name,data: Object.entries(traits)          .map( ([name,code]) => ({name,code: 'function ' + code.toString()}) )                }) );
-      console.log(response);
       return response
     }
 
@@ -322,13 +294,8 @@ export class Instance {
       const observableMissing = (name in this === false);
 
       if(!observableData[name]){
-        // console.log(`Observable ${name}`, observableData[name], this[name]);
-        // console.warn(`property "${name}" not defined on ${this.oo.name} (${Object.keys(observableData).join(', ')})`);
-        // console.log(`Creating a dynamic "${name}" observable via .on`, observableData, observableData[name]);
         this.oo.createObservable(name, this[name] );
-        // console.log(`Created a dynamic "${name}" observable via .on`, observableData[name]);
         if(!observableData[name]){
-          console.log(this);
           throw new Error(`Failed to create a dynamic observable "${name}" via .on on object ${this.oo.name}`)
         }
       }
@@ -378,7 +345,6 @@ export class Instance {
     // Install State (must come after methods as it may call come of them)
     const stateConstraints = {};
     const stateConstraint = function(constraints, constraintName){
-      // console.log('TESTING', constraintName, constraints[constraintName]);
       if(constraints[constraintName]){
       constraints[constraintName].forEach(({ test, message }) => {
         const verdict = test();
@@ -400,7 +366,6 @@ export class Instance {
           const currentState = state.current;
           const from = currentState;
           const to = stateName;
-          // console.log({from, to,});
 
           const transitionAllowed = isStateTransitionAllowed({
             from, to, state
@@ -410,13 +375,10 @@ export class Instance {
               throw new Error(`Cannot transition state from ${from} (current) to ${to}, only ${ensureArray(state[currentState].can).join(", ")} allowed.`)
           }
 
-          if(transitionAllowed){
-              // console.log(`Transitioniong ${specification.constructor.name} state from ${from} -> ${to} `);
-          }
+
 
           // execute methods specified in run
           const stateFunctions = ensureArray(state[stateName].run);
-          // console.log('LLL stateFunctions', stateFunctions);
           for (const functionName of stateFunctions) {
             // const lookup = specification;
             // if(!lookup || !lookup[functionName]) throw new Error(`State Change: Class ${specification.constructor.name} has no function named ${functionName}`)
@@ -434,7 +396,6 @@ export class Instance {
           // switch state
           state.current = stateName;
         }.bind(this);
-        // console.log(`Creating state function ${stateName}`);
         Object.defineProperty(this, stateName, {
           value: stateFunction,
           writable: true,
@@ -454,7 +415,6 @@ export class Instance {
       for (const keyName of ensureArray(stateValue.run)) {
         if(specification.constraints && specification.constraints[keyName]){
           for (const [constraintName, constraintValue] of Object.entries(specification.constraints[keyName])) {
-            //console.log(keyName, [constraintName, constraintValue] );
             if(!stateConstraints[keyName]) stateConstraints[keyName] = [];
               stateConstraints[keyName].push({message:constraintName, test:constraintValue.bind(this)});
           }
@@ -485,7 +445,6 @@ export class Instance {
     // appply constructor data
     if(data){
       for (const [name, value] of Object.entries(data)) {
-        // console.log(`CONSTRUCTOR DATA setting ${name} to`, value);
           this[name] = value;
       }
     }
@@ -541,7 +500,6 @@ export class Primitive {
     if (this.#value == data) return;
     this.constrain(data);
     const previousValue = this.#value;
-    // if(data !== undefined) console.log(`Setting ${this.name} to "${data}" was: `, this.#value);
     if(data !== undefined) this.notify(`${this.name}.before`, this.#value, previousValue);
     this.#value = data;
     if(data !== undefined) this.notify(this.name, this.#value, previousValue);
@@ -559,10 +517,8 @@ export class Primitive {
     if (typeof observerCallback !== "function") throw new TypeError("observer must be a function.");
     if (!Array.isArray(this.#observers[eventName])) this.#observers[eventName] = []; // If there isn't an observers array for this key yet, create it
     this.#observers[eventName].push(observerCallback);
-    // console.log(`this.#observers.${eventName}`, this.#observers[eventName]);
     if (options.autorun && this.#value !== undefined) observerCallback(this.#value);
     return () => {
-      console.log(`UNOBSERVING ${eventName}`);
       this.unobserve(eventName, observerCallback);
     };
   }
@@ -572,12 +528,10 @@ export class Primitive {
 
   notify(eventName, eventData, ...extra) {
     if (Array.isArray(this.#observers[eventName])){
-      // console.log(`Event ${eventName} has ${this.#observers[eventName].length} observer(s)`);
       this.#observers[eventName].forEach((observerCallback) => observerCallback(eventData, ...extra));
-    }else{
-      // console.log(`${eventName} has no observers`);
     }
   }
+  
   status(){
 
     return {
@@ -658,14 +612,6 @@ export class List {
   }
 
   notify(eventName, eventData, ...extra) {
-
-    if(this.#observers[eventName]){
-      console.log(`GGG We have ${this.#observers[eventName].length} for ${this.name}.${eventName}`)
-    }else{
-      console.log(`GGG We have NO OBSERVERS for ${this.name}.${eventName}`)
-
-    }
-
     if (Array.isArray(this.#observers[eventName])){
       for (const observerCallback of this.#observers[eventName]) {
         observerCallback(eventData, ...extra)
@@ -705,7 +651,6 @@ export class List {
     }
     const item = this.#value.find(o => o.id === id);
     this.#value = this.#value.filter(o => o !== item);
-    console.log(`LLL Notify removeal of ${item?.id}`);
     this.notify("removed", item);
     this.notify("changed", this.#value);
   }

@@ -89,13 +89,7 @@ export default class Anchor {
 
     },
 
-    clean(){
-      console.log('LLL Socket heard clean');
-    },
-
-    destroy(){
-      console.log('LLL Socket heard destroy');
-    }
+ 
 
 
   }

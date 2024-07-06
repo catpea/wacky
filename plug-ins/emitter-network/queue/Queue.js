@@ -61,19 +61,12 @@ export default class Queue {
 
     },
 
-    stop(){
-      console.log('todo: stopping root application');
-    },
-
-    destroy(){
-      console.log('todo: destroying root application');
-      this.dispose()
-    },
+ 
 
     // --- //
 
     step(data){
- 
+
       this.pipe.emit('out', {source:this, detail:data});
       this.el.ComponentBackground.classList.add('indicate');
       setTimeout(()=>this.el.ComponentBackground.classList.remove('indicate'), 333)

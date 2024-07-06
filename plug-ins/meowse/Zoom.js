@@ -46,13 +46,6 @@ export default class Zoom {
 
       e.stopImmediatePropagation();
 
-      // if(e.shiftKey) {
-      //
-      //   console.log('Brought under control.');
-      //   return;
-      //
-      // }
-
       ///NOTE: e.stopPropagation() is insufficent e.stopImmediatePropagation(); must be called to end other component zooming problems.
       // e.preventDefault();
 
@@ -108,8 +101,6 @@ export default class Zoom {
   //   let parentZoom = 1;
   //   let locationX = 0;
   //   let locationY = 0;
-  //
-  //   // console.log(locationX, locationY);
   //
   //   for (const [i,t] of localList.entries()) {
   //

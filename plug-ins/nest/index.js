@@ -9,7 +9,6 @@ const typeOf = function(variable){
 const byType = function(input){
   const response = {};
   for (const variable of input) {
-    // console.log(typeOf(variable), variable);
     response[typeOf(variable)] = variable;
   }
   return response;

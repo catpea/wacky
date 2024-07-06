@@ -54,7 +54,6 @@ export default class Resize {
     };
 
     this.mouseMoveHandler = (e) => {
-      // console.log( 'HIT!', e.target );
       // if(e.target !== this.handle) return;
       // e.preventDefault();
       // e.stopPropagation();

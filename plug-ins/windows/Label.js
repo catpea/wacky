@@ -25,7 +25,6 @@ export default class Label {
   methods = {
 
     initialize(){
-      // console.log(`%cComponent.initialize!`, 'background: hsl(180, 80%, 60%); color: black;', this);
       this.s = 3; // nudge text away from border
     },
 
@@ -106,10 +105,7 @@ export default class Label {
 
     },
 
-    destroy(){
-      // this.removeElements()
-      console.log('LLL LABEL SAYS HI!', this.el.Caption);
-    }
+ 
 
   }
 

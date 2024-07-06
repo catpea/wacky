@@ -17,7 +17,6 @@ export default class TranslateDomain {
         const distance = Math.abs(rangeLength - num);
         // add distance to min
         const invertedValue = max - distance;
-        // console.log(`${this.sourceRange[0]}-${this.sourceRange[1]}` ,{rangeLength, distance, invertedValue});
         return invertedValue;
     }
     translate(num) {

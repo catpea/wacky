@@ -27,7 +27,6 @@ export default class Menu {
       e.preventDefault();
       e.stopPropagation();
 
-      // console.log('SCALE', this.scale());
       let x = e.clientX;
       let y = e.clientY;
 

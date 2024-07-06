@@ -25,9 +25,7 @@ export default class Sockets {
     },
 
     removeSocket(id){
-      console.log('LLL BEFORE this.sockets.remove', id, this.sockets.map(o=>o.id).join(', '));
       this.sockets.remove(id);
-      console.log('LLL AFTER this.sockets.remove!', id, this.sockets.map(o=>o.id).join(', '));
     },
 
     send(name, packet){
@@ -60,15 +58,12 @@ export default class Sockets {
       }
 
       this.on("sockets.created", (socket) => {
-        console.log('LLL sockets.created');
         socket.start(); //<-- state machine cals multiple functions
         this.socketLayout.manage(socket);
         parent.getApplication().socketRegistry.create(socket);
       }, {replay: true} );
 
-      console.log('GGG Registering this.on("sockets.removed"....');
       this.on("sockets.removed", (socket) => {
-        console.log('LLL $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  sockets.removed');
         socket.stop(); //<-- state machine cals multiple functions
         parent.getApplication().socketRegistry.remove(socket.id);
 

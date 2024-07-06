@@ -2,12 +2,9 @@ import {parseScript} from 'esprima';
 
 export function getFunctionSignature(src){
 
-  console.log(src);
   const response = [];
   src = src.replace(/\?\./g, '.')
   const ast = parseScript(src, { tolerant: true });
-
-  console.log(ast.body[0].params);
 
   for (const param of ast.body[0].params) {
     switch (param.type) {
@@ -29,7 +26,7 @@ export function getFunctionSignature(src){
   }
 
   // BUG: esbuild renames variables by assing a number at the end, I do that to with x x1 x2 n1 so there is no esay fix
-  // response = response.map(name=>name.replace(/\d+$/,'')); 
+  // response = response.map(name=>name.replace(/\d+$/,''));
 
   return response;
 }

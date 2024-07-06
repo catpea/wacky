@@ -25,7 +25,6 @@ export default class Midjourney extends Node {
 	}
 
 	output() {
-		// console.log('MJ>', this);
 		return `${this.prompt} ${this.style} --ar ${this.aspectRatio} --v ${this.version}`
 	}
 

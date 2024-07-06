@@ -41,14 +41,5 @@ export default class Filter {
 
     },
 
-    stop(){
-      console.log('todo: stopping root application');
-    },
-
-    destroy(){
-      console.log('todo: destroying root application');
-      this.dispose()
-    },
-
   };
 }

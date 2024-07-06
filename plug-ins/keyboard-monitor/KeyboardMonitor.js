@@ -25,11 +25,9 @@ export default class KeyboardMonitor extends CuteEmitter {
 
 		this.keyDownListener = function(e){
 			// https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values
-			console.log(chart[e.key]);
 			self.emit(chart[e.key], e)
 		}
 
-		console.log('BBB MONITOR UP');
 		this.source.addEventListener('keydown', this.keyDownListener);
 	}
 

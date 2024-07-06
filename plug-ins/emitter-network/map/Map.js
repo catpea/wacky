@@ -26,14 +26,7 @@ export default class Map {
       this.ui = new Test({ target: this.foreign.body, });
     },
 
-    stop(){
-      console.log('todo: stopping root application');
-    },
-
-    destroy(){
-      console.log('todo: destroying root application');
-      this.dispose()
-    },
+ 
 
   };
 }

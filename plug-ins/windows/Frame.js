@@ -21,7 +21,6 @@ export default class Frame {
   methods = {
 
     initialize(){
-      // console.log(`%cControl.initialize!`, 'background: hsl(180, 80%, 60%); color: black;', this);
     },
 
     mount(){
@@ -40,7 +39,6 @@ export default class Frame {
         class: 'editor-frame',
         src: this.src,
       });
-      // console.log('IFRAME', iframe);
 
       let origin = null;
       this.on('src', src=>{
@@ -59,28 +57,18 @@ export default class Frame {
         if (!isSameSource) return;
 
         const {name, data} = msg.data;
-        // console.log(`Message from an iframe`, msg.data);
 
         let anchor = this.anchors.find(anchor=>anchor.name===name);
 
         let color;
         if(data.color) color = `rgba(${data.color.join(', ')})`;
-        // console.log(color, data.position);
         if(!anchor){
           this.anchors.create(new Instance(Anchor, { name, parent:this, scene: this.scene, side: 1, color }))
         }else{
           anchor.color = color;
         }
 
-        // console.log(`Message SOURCE`, (!this.src === msg.source.location.href), this.src, msg.source.location.href);
-        // console.log(`Message from an iframe`, msg);
-        // console.log(this.src, {
-        //   isSameOrigin: [isSameOrigin,origin, msg.origin],
-        //   isSameSource: [isSameSource, this.src, msg.source.location.href],
-        //   source: msg.source.location.href,
-        //   origin: msg.origin,
-        //   data: msg.data,
-        // });
+
 
 
       }, false);
@@ -89,7 +77,6 @@ export default class Frame {
 
 
         globalThis.project.on('iframe', visibility=>{
-          // console.log('visibility', visibility);
           this.el.ForeignObject.style.display = visibility?'block':'none';
         });
 

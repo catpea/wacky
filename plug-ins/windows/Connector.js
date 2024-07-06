@@ -83,9 +83,6 @@ export default class Connector {
 
       this.any('from out', ({from:nodeId, out:portName})=>{
         const socketId = [nodeId, portName].join('/');
-        console.log('from out', socketId, this.getApplication().id);
-        console.log(`this.any from out (application=${this.getApplication().id})`, this.getApplication().pane.elements.raw.map(o=>o.id));
-        console.log(`this.any from out (application=${this.getApplication().id})`, this.getApplication().socketRegistry.raw.map(o=>o.id));
 
         const socket = this.getApplication().socketRegistry.get(socketId);
         socket.on('x', x=>this.x1=x)
@@ -94,7 +91,6 @@ export default class Connector {
 
       this.any('to in', ({to:nodeId, in:portName})=>{
         const socketId = [nodeId, portName].join('/');
-        console.log('to in', socketId);
         const socket = this.getApplication().socketRegistry.get(socketId);
         socket.on('x', x=>this.x2=x)
         socket.on('y', y=>this.y2=y)
@@ -106,7 +102,6 @@ export default class Connector {
         let connectionId = [o.from, o.out, o.to, o.in].join('+');
 
         if(this.connectionId == connectionId) {
-          console.log('DUPE', this.connectionId);
           return;
         }
 
@@ -119,8 +114,6 @@ export default class Connector {
           const control2 = this.getApplication().socketRegistry.get(socket2).control;
           this.addDisposableFromEmitter(control1.pipe, o.out, packet=>control2.pipe.emit(o.in, packet));
           this.connectionId = connectionId;
-        }else{
-          console.log('DISCO', [o.from, o.out, o.to, o.in]);
         }
 
 

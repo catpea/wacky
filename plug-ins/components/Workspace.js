@@ -64,7 +64,6 @@ export default class Workspace {
   methods = {
 
     initialize(){
-      console.log('Workspace Initialize!');
       // NOTE: this is the main keyboard handler that components may subscribe to via getRoot()
       this.keyboard = new KeyboardMonitor();
       this.addDisposable(this.keyboard);
@@ -76,7 +75,7 @@ export default class Workspace {
         $(this.oo.name).append(this.pane.getXml());
       }
       const xml = $.root().html();
-      console.log(xml);
+      console.info(xml);
       return xml;
     },
 

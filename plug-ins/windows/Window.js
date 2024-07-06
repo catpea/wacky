@@ -36,7 +36,7 @@ export default class Window {
   };
 
   traits = {
- 
+
     createWindowComponent(component){
       component.parent = this;
       this.children.create(component);
@@ -142,14 +142,7 @@ export default class Window {
       this.addDisposable(focus);
 
     },
-
-    clean(){
-      console.log('LLL * Window Clean');
-    },
-
-    destroy(){
-      console.log('LLL * Window Destroy');
-    },
+ 
 
   };
 

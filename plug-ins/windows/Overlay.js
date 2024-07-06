@@ -52,7 +52,6 @@ export default class Overlay {
       this.appendElements();
 
       this.el.Overlay.addEventListener('click', e => {
-        console.log('Overlay click');
          this.parent.closeMenu();
       });
 
@@ -76,7 +75,6 @@ export default class Overlay {
     },
 
     onResizeWindow(){
-      console.log(this);
       update(this.el.Overlay, {width:  this.getRoot().svg.clientWidth} );
       update(this.el.Overlay, {height: this.getRoot().svg.clientHeight} );
 

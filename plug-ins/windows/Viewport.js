@@ -63,7 +63,6 @@ export default class Viewport {
 
       // Give the component a background
       const bgColor = `hsla(${parseInt(360*Math.random())}, 25%, 30%, 0.2)`;
-      // console.log(bgColor);
       this.background = svg.rect({
         'stroke-width': this.b,
         'vector-effect': 'non-scaling-stroke',
@@ -73,7 +72,6 @@ export default class Viewport {
       })
 
       this.getApplication().on("node", (node) => {
-        // console.log('node-type', node.type);
           this.background.classList.add(node.type.toLowerCase());
       });
 

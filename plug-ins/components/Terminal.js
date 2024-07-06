@@ -48,7 +48,7 @@ export default class Terminal {
       var command = '';
 
       const dataHandler = e => {
-        console.log('term.onData', e);
+        console.info('term.onData', e);
         switch (e) {
           case '\u0003': // Ctrl+C
             term.write('^C');
@@ -155,7 +155,7 @@ export default class Terminal {
     },
 
     destroy(){
-      console.log(`TODO!!!!!!!!!!!! Terminal Got Destroyed`);
+      console.info(`TODO!!!!!!!!!!!! Terminal Got Destroyed`);
     }
 
   };

@@ -7,8 +7,6 @@ export default function translate(x0,y0,localList){
       let locationX = 0;
       let locationY = 0;
 
-      // console.log(locationX, locationY);
-
       for (const [i,t] of localList.entries()) {
 
         // Position of component x

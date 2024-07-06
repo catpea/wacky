@@ -48,11 +48,11 @@ export default class Themes {
       });
 
       this.on("themes.created", (list) => {
-        console.log("GGG themes created", { list });
+        // console.log("GGG themes created", { list });
       });
 
       this.on("themes.removed", (x) => {
-        console.log("GGG themes removed", x);
+        // console.log("GGG themes removed", x);
       });
 
       // way to listen to an array

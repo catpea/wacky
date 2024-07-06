@@ -153,8 +153,6 @@ export default class Component {
       if(isTransform){
         let offsetX = element.viewport.x - element.x;
         let offsetY = element.viewport.y - element.y;
-        // console.log('XXX paneY', element.oo.name, element.y, element.viewport.y, offsetY);
-
         const {oo:{name}, panX, panY, zoom, x,y} = element;
         list.unshift({name, panX, panY, zoom, x:element.x+offsetX,y:element.y+offsetY , element:element.scene, offsetX:0, offsetY:0});
       }
@@ -204,17 +202,14 @@ export default class Component {
     },
 
     clean(){
-      console.log('LLL Component Clean');
     },
 
     destroy(){
-      console.log('LLL Component Destroy');
       this.dispose();
       this.removeElements();
     },
 
     exit(){
-      console.log('LLL Component Exit');
     },
 
 

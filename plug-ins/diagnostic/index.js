@@ -252,10 +252,8 @@ export class DiagnosticPoint {
   }
   draw({x,y, text}){
 
-    // console.log(`draw({${x},${y}})`);
     this.text.nodeValue = `${x}x ${y}y ${text||this.name}`
     const {x1,y1,x2,y2} = rotate2({x1:x, y1:y, x2:x+this.length, y2:y}, this.angle);
-    // console.log({x1,y1,x2,y2});
     update(this.centerCircle, {cx:x,cy:y } );
     // update(this.indicatorLine, {x1:x+this.space, y1:y, x2:x+200, y2:y})
     update(this.indicatorLine, {x1,y1,x2,y2})

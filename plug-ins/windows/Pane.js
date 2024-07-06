@@ -185,7 +185,6 @@ export default class Pane {
       }, {replay:true});
 
       this.on("elements.removed", ({id}) => {
-        console.log("GGGG elements.removed", id);
         this.applications.get(id).stop();
         this.applications.get(id).destroy();
         this.applications.remove(id);
@@ -208,7 +207,6 @@ export default class Pane {
             text: `New ${className}`,
             value: className,
             action:()=>{
-              console.log('Creating', className, this.panX, this.panY, this.zoom);
               const node = new Instance(Node, {
                 id:uuid(),
                 origin: this.getApplication().id,
@@ -274,8 +272,6 @@ export default class Pane {
     },
 
     clean(){
-      console.log('TODO pane.clean actually stop all the applications elements anchors pipes');
-
       this.elements.map( ({id})=>this.elements.remove(id) );
       // done by elements this.applications.map( ({id})=>this.applications.remove(id) );
       this.anchors.map( ({id})=>this.anchors.remove(id) );
@@ -284,9 +280,7 @@ export default class Pane {
 
     },
 
-    destroy(){
-      console.log('LLL pane.destroy');
-    }
+ 
 
   }
 
